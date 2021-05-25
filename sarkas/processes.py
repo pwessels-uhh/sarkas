@@ -628,7 +628,7 @@ class PreProcess(Process):
             lambda x, a, b: a + 15 * b * x ** 3 * np.log2(x),
             self.pm_meshes,
             pm_times)
-        fit_str = 'Fit = a + 15 b M^3 log(M)  [s]\n a = {:.4e}, b = {:.4e} '.format(*pm_popt)
+        fit_str = r'Fit = $a_2 + 15 a_3 M^3 log_2(M)$ [s]' +'\n' + r'$a_2$ = {:.4e}, $a_3$ = {:.4e}'.format(*pm_popt)
         print('\nPM Time ' + fit_str)
 
         fig, (ax_pp, ax_pm) = plt.subplots(1, 2, sharey=True, figsize=(12, 7))
@@ -654,14 +654,14 @@ class PreProcess(Process):
             ax_pp.plot(self.pp_cells, pp_times[j], 'o', label=r'@ Mesh {}$^3$'.format(mesh_points))
 
         pp_popt, _ = curve_fit(
-            lambda x, b: b / x ** 3,
+            lambda x, a, b: a + b / x ** 3,
             self.pp_cells,
             np.mean( pp_times, axis = 0),
-            p0=[self.parameters.total_num_ptcls]
+            p0=[1.0, self.parameters.total_num_ptcls]
         )
-        fit_pp_str = 'Fit = a / Cells**3  [s] \n a = {:.4e}'.format(*pp_popt)
+        fit_pp_str = r'Fit = $a_0$ + $a_1 / N_c^3$  [s]' + '\n' + r'$a_0$ = {:.4e}, $a_1$ = {:.4e}'.format(*pp_popt)
         print('\nPP Time ' + fit_pp_str)
-        ax_pp.plot(self.pp_cells, pp_popt[0] / self.pp_cells ** 3, ls='--', label='Fit')
+        ax_pp.plot(self.pp_cells, pp_popt[0]  + pp_popt[1]/ self.pp_cells ** 3, ls='--', label='Fit')
         ax_pp.legend(ncol = 2)
         ax_pp.annotate(
             text=fit_pp_str,

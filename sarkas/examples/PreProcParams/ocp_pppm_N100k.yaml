@@ -1,0 +1,54 @@
+IO:
+  job_dir: ocp_pppm_N100k
+  job_id: yocp
+  simulations_dir: Simulations
+  verbose: false
+Integrator:
+  eq_dump_step: 10
+  equilibration_steps: 5000
+  prod_dump_step: 10
+  production_steps: 5000
+  type: Verlet
+Parameters:
+  boundary_conditions: periodic
+  dt: 2.0e-18
+  load_method: random_no_reject
+  units: mks
+Particles:
+- Species:
+    Z: 1.0
+    mass: 1.673e-27
+    name: H
+    num: 100000
+    number_density: 1.62e+32
+    temperature_eV: 1.25
+PostProcessing:
+- RadialDistributionFunction:
+    no_bins: 500
+- Thermodynamics:
+    phase: production
+- DynamicStructureFactor:
+    max_ka_value: 8
+    no_slices: 1
+- StaticStructureFactor:
+    max_ka_value: 8
+- CurrentCorrelationFunction:
+    max_ka_value: 8
+Potential:
+  method: P3M
+  pppm_aliases:
+  - 3
+  - 3
+  - 3
+  pppm_alpha_ewald: 54659000000.0
+  pppm_cao: 6
+  pppm_mesh:
+  - 64
+  - 64
+  - 64
+  rc: 6.2702e-11
+  type: Coulomb
+Thermostat:
+  berendsen_tau: 1.0
+  relaxation_timestep: 50
+  type: Berendsen
