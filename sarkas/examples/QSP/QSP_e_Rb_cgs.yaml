@@ -1,0 +1,59 @@
+# J.P. Hansen and I.R. McDonald Phys Rev A 23 2041 (1981)
+Particles:
+    - Species:
+        name: e
+        number_density: 1.0e+07       # N/cc
+        mass: 9.1093837015e-28        # g, electron mass
+        num: 2048                     
+        Z: -1.0                       # degree of ionization
+        temperature: 4.0 
+
+    - Species:
+        name: Rb
+        number_density: 1.0e+07
+        atomic_weight: 85.4678
+        num: 2048                  
+        Z: 1.0
+        temperature: 4.0 
+
+Potential: 
+    type: QSP                         # potential type
+    qsp_type: Deutsch
+    method: P3M                    
+    rc: 1.119964e-02                  # cut-off radius, cm
+    pppm_mesh: [32,32,32]
+    pppm_aliases: [3,3,3]
+    pppm_cao: 6
+    pppm_alpha_ewald: 9.466103e+01
+
+Integrator:
+    type: verlet
+    dt: 7.0208e-12                    # sec
+    equilibration_steps: 0
+    eq_dump_step: 10
+    production_steps: 42000
+    prod_dump_step: 6
+
+Thermostat:
+    type: Berendsen                   #  thermostat type
+    relaxation_timestep: 2
+    berendsen_tau: 5.0
+
+Parameters:
+    units: cgs                        # units
+    load_method: random_no_reject    
+    # load_rejection_radius: 10.0e-8
+
+IO:
+    verbose: True
+    job_dir: qsp_cgs        # dir name to save data.
+
+PostProcessing:
+  - Thermodynamics:
+      phase: production
+
+  - RadialDistributionFunction:
+      no_bins: 10
+
+  - StaticStructureFactor:
+      max_k_harmonics: 5

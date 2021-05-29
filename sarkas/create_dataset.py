@@ -8,12 +8,12 @@ import pandas as pd
 # Import sarkas                                                                                                                 
 from sarkas.processes import PreProcess
 from sarkas.utilities.timing import SarkasTimer as stimer
-meshes = np.array([8, 16, 24, 32, 64, 128], dtype = np.int)                                            
+meshes = np.array([8, 16, 32, 64, 128], dtype = np.int)
 kappas = np.linspace(0.1, 1.0, 19)                                                                                               
 
 data = pd.DataFrame()
 # COULOMB
-nps = 1000
+nps = 10000
 t0 = stimer.current()
 flename = os.path.join('input', "ocp_pppm_N{}k.yaml".format(int(nps*1e-3)) )
 preproc = PreProcess(flename)

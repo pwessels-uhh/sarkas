@@ -3,7 +3,7 @@ Module for handling the Particle-Mesh part of the force and potential calculatio
 """
 
 import numpy as np
-from numba import jit, njit
+import numba as nb
 import pyfftw
 
 # These "ignore" are needed because numba does not support pyfftw yet
@@ -14,7 +14,7 @@ warnings.simplefilter('ignore', category=NumbaWarning)
 warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 
 
-@njit
+@nb.njit
 def force_optimized_green_function(box_lengths, mesh_sizes, aliases, p, constants):
     """
     Calculate the Optimized Green Function given by eq.(22) of Ref. [Stern2008].
@@ -142,7 +142,7 @@ def force_optimized_green_function(box_lengths, mesh_sizes, aliases, p, constant
     return G_k, kx_v, ky_v, kz_v, PM_err
 
 
-@njit
+@nb.njit
 def assgnmnt_func(cao, x):
     """ 
     Calculate the charge assignment function as given in Ref. [Deserno1998].
@@ -224,7 +224,7 @@ def assgnmnt_func(cao, x):
     return W
 
 
-@njit
+@nb.njit(parallel=True)
 def calc_charge_dens(pos, charges, N, cao, mesh_sz, h_array):
     """ 
     Assigns Charges to Mesh Points.
@@ -268,7 +268,7 @@ def calc_charge_dens(pos, charges, N, cao, mesh_sz, h_array):
         mid = 0.0
         pshift = int(cao / float(2.0))
 
-    for ipart in range(N):
+    for ipart in nb.prange(N):
 
         # ix = x-coord of the (left) closest mesh point
         # (ix + 0.5)*h_array[0] = midpoint between the two mesh points closest to the particle
@@ -336,7 +336,7 @@ def calc_charge_dens(pos, charges, N, cao, mesh_sz, h_array):
     return rho_r
 
 
-@njit
+@nb.njit
 def calc_field(phi_k, kx_v, ky_v, kz_v):
     """ 
     Calculates the Electric field in Fourier space.
@@ -375,7 +375,7 @@ def calc_field(phi_k, kx_v, ky_v, kz_v):
     return E_kx, E_ky, E_kz
 
 
-@njit
+@nb.njit(parallel = True)
 def calc_acc_pm(E_x_r, E_y_r, E_z_r, pos, charges, N, cao, masses, mesh_sz, h_array):
     """ 
     Calculates the long range part of particles' accelerations. 
@@ -432,7 +432,7 @@ def calc_acc_pm(E_x_r, E_y_r, E_z_r, pos, charges, N, cao, masses, mesh_sz, h_ar
         # Number of points to the left of the chosen one
         pshift = int(cao / float(2.0))
 
-    for ipart in range(N):
+    for ipart in nb.prange(N):
 
         ix = int(pos[ipart, 0] / h_array[0])
         x = pos[ipart, 0] / h_array[0] - (ix + mid)
@@ -504,7 +504,7 @@ def calc_acc_pm(E_x_r, E_y_r, E_z_r, pos, charges, N, cao, masses, mesh_sz, h_ar
 
 
 # FFTW version
-@jit  # Numba does not support pyfftw yet, however, this decorator still speeds up the function.
+@nb.jit  # Numba does not support pyfftw yet, however, this decorator still speeds up the function.
 def update(pos, charges, masses, mesh_sizes, box_lengths, G_k, kx_v, ky_v, kz_v, cao):
     """ 
     Calculate the long range part of particles' accelerations.
@@ -557,7 +557,7 @@ def update(pos, charges, masses, mesh_sizes, box_lengths, G_k, kx_v, ky_v, kz_v,
     # Calculate charge density on mesh
     rho_r = calc_charge_dens(pos, charges, N, cao, mesh_sizes, mesh_spacings)
     # Prepare for fft
-    fftw_n = pyfftw.builders.fftn(rho_r)
+    fftw_n = pyfftw.builders.fftn(rho_r, threads=4)
     # Calculate fft
     rho_k_fft = fftw_n()
 
@@ -584,11 +584,11 @@ def update(pos, charges, masses, mesh_sizes, box_lengths, G_k, kx_v, ky_v, kz_v,
     E_kz_unsh = np.fft.ifftshift(E_kz)
 
     # Prepare and compute IFFT
-    ifftw_n = pyfftw.builders.ifftn(E_kx_unsh)
+    ifftw_n = pyfftw.builders.ifftn(E_kx_unsh, threads=4)
     E_x = ifftw_n()
-    ifftw_n = pyfftw.builders.ifftn(E_ky_unsh)
+    ifftw_n = pyfftw.builders.ifftn(E_ky_unsh, threads=4)
     E_y = ifftw_n()
-    ifftw_n = pyfftw.builders.ifftn(E_kz_unsh)
+    ifftw_n = pyfftw.builders.ifftn(E_kz_unsh, threads=4)
     E_z = ifftw_n()
 
     # I am worried that this normalization is not needed
