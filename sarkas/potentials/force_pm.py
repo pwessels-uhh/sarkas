@@ -557,7 +557,7 @@ def update(pos, charges, masses, mesh_sizes, box_lengths, G_k, kx_v, ky_v, kz_v,
     # Calculate charge density on mesh
     rho_r = calc_charge_dens(pos, charges, N, cao, mesh_sizes, mesh_spacings)
     # Prepare for fft
-    fftw_n = pyfftw.builders.fftn(rho_r, threads=4)
+    fftw_n = pyfftw.builders.fftn(rho_r, threads=6)
     # Calculate fft
     rho_k_fft = fftw_n()
 
@@ -584,11 +584,11 @@ def update(pos, charges, masses, mesh_sizes, box_lengths, G_k, kx_v, ky_v, kz_v,
     E_kz_unsh = np.fft.ifftshift(E_kz)
 
     # Prepare and compute IFFT
-    ifftw_n = pyfftw.builders.ifftn(E_kx_unsh, threads=4)
+    ifftw_n = pyfftw.builders.ifftn(E_kx_unsh, threads=6)
     E_x = ifftw_n()
-    ifftw_n = pyfftw.builders.ifftn(E_ky_unsh, threads=4)
+    ifftw_n = pyfftw.builders.ifftn(E_ky_unsh, threads=6)
     E_y = ifftw_n()
-    ifftw_n = pyfftw.builders.ifftn(E_kz_unsh, threads=4)
+    ifftw_n = pyfftw.builders.ifftn(E_kz_unsh, threads=6)
     E_z = ifftw_n()
 
     # I am worried that this normalization is not needed
