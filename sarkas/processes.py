@@ -170,7 +170,7 @@ class Process:
         self.parameters.from_dict(self.io.__dict__)
         # save some general info
         self.parameters.potential_type = self.potential.type
-        self.parameters.cutoff_radius = self.potential.rc
+        self.parameters.cutoff_radius = self.potential.rc if not self.potential.method.lower() == 'fmm' else 0.0
         self.parameters.integrator = self.integrator.type
         self.parameters.thermostat = self.thermostat.type
 

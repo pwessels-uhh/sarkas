@@ -10,8 +10,6 @@ if get_ipython().__class__.__name__ == 'ZMQInteractiveShell':
     from tqdm import tqdm_notebook as tqdm
 else:
     from tqdm import tqdm
-# import fmm3dpy as fmm
-# from sarkas.potentials import force_pm, force_pp
 
 
 class Integrator:
@@ -232,7 +230,7 @@ class Integrator:
                     else:
                         self.mag_dump_step = int(0.1 * self.production_steps)
 
-        if not potential.method == 'FMM':
+        if not potential.method.lower() == 'fmm':
             if potential.pppm_on:
                 self.update_accelerations = potential.update_pppm
             else:
@@ -358,7 +356,7 @@ class Integrator:
         ptcls.pos += ptcls.vel * self.dt
 
         # Periodic boundary condition
-        enforce_pbc(ptcls.pos, ptcls.pbc_cntr, self.box_lengths)
+        # enforce_pbc(ptcls.pos, ptcls.pbc_cntr, self.box_lengths)
         # Compute total potential energy and acceleration for second half step velocity update
         self.update_accelerations(ptcls)
 

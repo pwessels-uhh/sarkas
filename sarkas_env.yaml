@@ -1,4 +1,4 @@
-name: sarkas
+name: sarkas_fmm
 
 channels:
   - conda-forge
@@ -38,3 +38,4 @@ dependencies:
   
   - pip:
       - fdint
+      - fmm3dpy
