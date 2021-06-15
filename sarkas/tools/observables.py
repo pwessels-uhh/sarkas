@@ -2556,9 +2556,8 @@ class PressureTensor(Observable):
                 time[it] = datap["time"]
 
                 pressure[it], pressure_tensor_temp[:, :, it] = calc_pressure_tensor(
-                    datap["pos"],
                     datap["vel"],
-                    datap["acc"],
+                    datap["virial"],
                     self.species_masses,
                     self.species_num,
                     self.box_volume)
@@ -3582,7 +3581,7 @@ def calc_nkt(fldr, slices, dump_step, species_np, k_list, verbose):
 
 
 @njit
-def calc_pressure_tensor(pos, vel, acc, species_mass, species_np, box_volume):
+def calc_pressure_tensor(vel, virial, species_mass, species_np, box_volume):
     """
     Calculate the pressure tensor.
 
@@ -3621,10 +3620,9 @@ def calc_pressure_tensor(pos, vel, acc, species_mass, species_np, box_volume):
     for sp, num in enumerate(species_np):
         sp_end += num
         vel[sp_start: sp_end,:] *= np.sqrt(species_mass[sp])
-        acc[sp_start: sp_end,:] *= species_mass[sp]  # force
         sp_start += num
 
-    pressure_tensor = (np.transpose(vel) @ vel + np.transpose(pos) @ acc) / box_volume
+    pressure_tensor = (np.transpose(vel) @ vel + virial.sum()) / box_volume
     pressure = np.trace(pressure_tensor) / 3.0
 
     return pressure, pressure_tensor

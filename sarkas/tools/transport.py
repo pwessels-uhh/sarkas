@@ -650,6 +650,11 @@ class TransportCoefficient:
                 coefficient[sv_str + " {}{}_Mean".format(ax1, ax2)] = coefficient[col_str].mean(axis=1)
                 coefficient[sv_str + " {}{}_Std".format(ax1, ax2)] = coefficient[col_str].std(axis=1)
 
+        list_coord = ['xy','xz','yx','yz','zx','zy']
+        col_str = [sv_str + " {}_Mean".format(coord) for coord in list_coord]
+        coefficient["Shear Viscosity_Mean"] = coefficient[col_str].mean(axis=1)
+        coefficient["Shear Viscosity_Std"] = coefficient[col_str].std(axis=1)
+
         coefficient.columns = pd.MultiIndex.from_tuples([tuple(c.split("_")) for c in coefficient.columns])
         coefficient.to_hdf(
             os.path.join(pt.saving_dir, 'Viscosities_' + pt.job_id + '.h5'),

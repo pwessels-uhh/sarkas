@@ -1101,6 +1101,7 @@ class InputOutput:
                      acc=ptcls.acc,
                      cntr=ptcls.pbc_cntr,
                      rdf_hist=ptcls.rdf_hist,
+                     virial=ptcls.virial,
                      time=tme)
 
             energy_file = self.prod_energy_filename
@@ -1114,6 +1115,7 @@ class InputOutput:
                      pos=ptcls.pos,
                      vel=ptcls.vel,
                      acc=ptcls.acc,
+                     virial=ptcls.virial,
                      time=tme)
 
             energy_file = self.eq_energy_filename
@@ -1127,6 +1129,7 @@ class InputOutput:
                      pos=ptcls.pos,
                      vel=ptcls.vel,
                      acc=ptcls.acc,
+                     virial=ptcls.virial,
                      time=tme)
 
             energy_file = self.mag_energy_filename

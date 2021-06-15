@@ -232,7 +232,7 @@ class Integrator:
                     else:
                         self.mag_dump_step = int(0.1 * self.production_steps)
 
-        if not potential.method == 'FMM':
+        if not potential.method.lower() == 'fmm':
             if potential.pppm_on:
                 self.update_accelerations = potential.update_pppm
             else:

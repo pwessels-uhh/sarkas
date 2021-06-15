@@ -3,7 +3,7 @@ Module for handling Particle-Particle interaction.
 """
 
 import numpy as np
-from numba import njit
+from numba import njit, prange
 
 @njit
 def update_0D(pos, id_ij, mass_ij, Lv, rc, potential_matrix, force, measure, rdf_hist):
@@ -119,7 +119,7 @@ def update_0D(pos, id_ij, mass_ij, Lv, rc, potential_matrix, force, measure, rdf
     return U_s_r, acc_s_r
 
 
-@njit
+@njit(parallel=True)
 def update(pos, p_id, p_mass, box_lengths, rc, potential_matrix, force, measure, rdf_hist):
     """
     Update the force on the particles based on a linked cell-list (LCL) algorithm.
@@ -174,7 +174,8 @@ def update(pos, p_id, p_mass, box_lengths, rc, potential_matrix, force, measure,
     N = pos.shape[0]  # Number of particles
     d = pos.shape[1]  # Number of dimensions
     rshift = np.zeros(d)  # Shifts for array flattening
-
+    # Virial term for the viscosity calculation
+    virial = np.zeros(N)
     # Initialize
     U_s_r = 0.0  # Short-ranges potential energy accumulator
     ls = np.arange(N)  # List of particle indices in a given cell
@@ -208,7 +209,7 @@ def update(pos, p_id, p_mass, box_lengths, rc, potential_matrix, force, measure,
         head[c] = i
 
     # Loop over all cells in x, y, and z direction
-    for cx in range(cells_per_dim[0]):
+    for cx in prange(cells_per_dim[0]):
         for cy in range(cells_per_dim[1]):
             for cz in range(cells_per_dim[2]):
 
@@ -302,7 +303,10 @@ def update(pos, p_id, p_mass, box_lengths, rc, potential_matrix, force, measure,
                                             U_s_r += pot
 
                                             # Update the acceleration for i particles in each dimension
+                                            virial[i] += (dx**2 + dy**2 + dz**2) * fr
+                                            virial[j] -= (dx**2 + dy**2 + dz**2) * fr
 
+                                            # Update the acceleration for i particles in each dimension
                                             acc_s_r[i, 0] += dx * fr / p_mass[i]
                                             acc_s_r[i, 1] += dy * fr / p_mass[i]
                                             acc_s_r[i, 2] += dz * fr / p_mass[i]
@@ -317,4 +321,4 @@ def update(pos, p_id, p_mass, box_lengths, rc, potential_matrix, force, measure,
 
                                 # Check if head particle interacts with other cells
                                 i = ls[i]
-    return U_s_r, acc_s_r
+    return U_s_r, acc_s_r, virial

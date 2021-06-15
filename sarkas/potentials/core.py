@@ -136,7 +136,7 @@ class Potential:
 
         """
         # Check for cutoff radius
-        if not self.type.lower() == 'fmm':
+        if not self.method.lower() == 'fmm':
             self.linked_list_on = True  # linked list on
             if not hasattr(self, "rc"):
                 print("\nWARNING: The cut-off radius is not defined. L/2 = {:1.4e} will be used as rc".format(
@@ -315,7 +315,7 @@ class Potential:
             Particles data.
 
         """
-        ptcls.potential_energy, ptcls.acc = force_pp.update(ptcls.pos, ptcls.id, ptcls.masses, self.box_lengths,
+        ptcls.potential_energy, ptcls.acc, ptcls.virial = force_pp.update(ptcls.pos, ptcls.id, ptcls.masses, self.box_lengths,
                                            self.rc, self.matrix, self.force,
                                            self.measure, ptcls.rdf_hist)
 
