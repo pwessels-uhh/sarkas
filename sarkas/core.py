@@ -727,7 +727,7 @@ class Particles:
         self.acc = np.zeros((self.total_num_ptcls, params.dimensions))
 
         self.pbc_cntr = np.zeros((self.total_num_ptcls, params.dimensions))
-        self.virial = np.zeros(self.total_num_ptcls)
+        self.virial = np.zeros((params.dimensions, params.dimensions, self.total_num_ptcls))
 
         self.names = np.empty(self.total_num_ptcls, dtype=params.species_names.dtype)
         self.id = np.zeros(self.total_num_ptcls, dtype=int)

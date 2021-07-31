@@ -49,8 +49,8 @@ class TransportCoefficient:
         print('No. dumps per slice = {}'.format(int(observable.slice_steps / observable.dump_step)))
 
         print('Time interval of autocorrelation function = {:.4e} [s] ~ {} w_p T'.format(
-            observable.dt * observable.slice_steps,
-            int(observable.dt * observable.slice_steps * observable.total_plasma_frequency)))
+            observable.dt * observable.slice_steps * observable.dump_step,
+            int(observable.dt * observable.slice_steps * observable.dump_step * observable.total_plasma_frequency)))
 
     @staticmethod
     def electrical_conductivity(params,
@@ -557,6 +557,7 @@ class TransportCoefficient:
     @staticmethod
     def viscosity(params,
                   phase: str = 'production',
+                  parse: bool = False,
                   compute_acf: bool = True,
                   no_slices: int = 1,
                   plot: bool = True,
@@ -592,75 +593,82 @@ class TransportCoefficient:
         energies.setup(params, phase)
         energies.parse()
 
-        if compute_acf:
-            pt = obs.PressureTensor()
-            pt.setup(params, phase, no_slices, **kwargs)
-            pt.compute()
-        else:
-            pt = obs.PressureTensor()
-            pt.setup(params, phase, no_slices, **kwargs)
+        pt = obs.PressureTensor()
+        pt.setup(params, phase, no_slices, **kwargs)
+        if parse:
             pt.parse()
-
-        TransportCoefficient.pretty_print(pt, 'Viscosities')
-
-        time = pt.dataframe["Time"].to_numpy()[:, 0]
-        coefficient["Time"] = time
-        dim_lbl = ['x', 'y', 'z']
-
-        pt_str = "Pressure Tensor ACF"
-        start_steps = 0
-        end_steps = 0
-
-        for isl in tqdm(range(pt.no_slices), disable=not pt.verbose):
-            end_steps += pt.slice_steps
-
-            beta = (np.mean(energies.dataframe["Temperature"].iloc[start_steps:end_steps]) * pt.kB) ** (-1.0)
-            const = params.box_volume * beta
-            # Calculate Bulk Viscosity
-            bulk_viscosity = np.zeros(pt.slice_steps)
-            # Bulk viscosity is calculated from the fluctuations of the pressure eq. 2.124a Allen & Tilsdeley
-            bulk_integrand = np.copy(pt.dataframe[("Delta Pressure ACF", "slice {}".format(isl))])
-
-            for it in range(1, pt.slice_steps):
-                bulk_viscosity[it] = const * np.trapz(bulk_integrand[:it], x=time[:it])
-
-            coefficient["Bulk Viscosity_slice {}".format(isl)] = bulk_viscosity
-
-            shear_viscosity = np.zeros((params.dimensions, params.dimensions, pt.slice_steps))
-
-            for i, ax1 in enumerate(dim_lbl):
-                for j, ax2 in enumerate(dim_lbl):
-
-                    integrand = pt.dataframe[(pt_str + " {}{}".format(ax1, ax2), 'slice {}'.format(isl))].to_numpy()
-                    for it in range(1, pt.slice_steps):
-                        shear_viscosity[i, j, it] = const * np.trapz(integrand[:it], x=time[:it])
-
-                    coefficient["Shear Viscosity Tensor {}{}_slice {}".format(ax1, ax2, isl)] = shear_viscosity[i, j, :]
-            start_steps += pt.slice_steps
-
-        # Now average the slice
-        col_str = ["Bulk Viscosity_slice {}".format(isl) for isl in range(pt.no_slices)]
-        coefficient["Bulk Viscosity_Mean"] = coefficient[col_str].mean(axis=1)
-        coefficient["Bulk Viscosity_Std"] = coefficient[col_str].std(axis=1)
-
-        sv_str = "Shear Viscosity Tensor"
-        for i, ax1 in enumerate(dim_lbl):
-            for j, ax2 in enumerate(dim_lbl):
-                col_str = [sv_str + " {}{}_slice {}".format(ax1, ax2, isl) for isl in range(pt.no_slices)]
-                coefficient[sv_str + " {}{}_Mean".format(ax1, ax2)] = coefficient[col_str].mean(axis=1)
-                coefficient[sv_str + " {}{}_Std".format(ax1, ax2)] = coefficient[col_str].std(axis=1)
-
-        list_coord = ['xy','xz','yx','yz','zx','zy']
-        col_str = [sv_str + " {}_Mean".format(coord) for coord in list_coord]
-        coefficient["Shear Viscosity_Mean"] = coefficient[col_str].mean(axis=1)
-        coefficient["Shear Viscosity_Std"] = coefficient[col_str].std(axis=1)
-
-        coefficient.columns = pd.MultiIndex.from_tuples([tuple(c.split("_")) for c in coefficient.columns])
-        coefficient.to_hdf(
-            os.path.join(pt.saving_dir, 'Viscosities_' + pt.job_id + '.h5'),
-            mode='w',
+            time = pt.dataframe["Time"].to_numpy()[:, 0]
+            coefficient = pd.read_hdf(os.path.join(pt.saving_dir, 'Viscosities_' + pt.job_id + '.h5'),
+            mode='r',
             key='viscosities',
             index=False)
+        else:
+            if compute_acf:
+
+                pt.compute()
+            else:
+                pt.parse()
+
+            TransportCoefficient.pretty_print(pt, 'Viscosities')
+
+            time = pt.dataframe["Time"].to_numpy()[:, 0]
+            coefficient["Time"] = time
+            dim_lbl = ['x', 'y', 'z']
+
+            pt_str = "Pressure Tensor ACF"
+            start_steps = 0
+            end_steps = 0
+
+            for isl in tqdm(range(pt.no_slices), disable=not pt.verbose):
+                end_steps += pt.slice_steps
+
+                beta = (np.mean(energies.dataframe["Temperature"].iloc[start_steps:end_steps]) * pt.kB) ** (-1.0)
+                const = params.box_volume * beta
+                # Calculate Bulk Viscosity
+                bulk_viscosity = np.zeros(pt.slice_steps)
+                # Bulk viscosity is calculated from the fluctuations of the pressure eq. 2.124a Allen & Tilsdeley
+                bulk_integrand = np.copy(pt.dataframe[("Delta Pressure ACF", "slice {}".format(isl))])
+
+                for it in range(1, pt.slice_steps):
+                    bulk_viscosity[it] = const * np.trapz(bulk_integrand[:it], x=time[:it])
+
+                coefficient["Bulk Viscosity_slice {}".format(isl)] = bulk_viscosity
+
+                shear_viscosity = np.zeros((params.dimensions, params.dimensions, pt.slice_steps))
+
+                for i, ax1 in enumerate(dim_lbl):
+                    for j, ax2 in enumerate(dim_lbl):
+
+                        integrand = pt.dataframe[(pt_str + " {}{}".format(ax1, ax2), 'slice {}'.format(isl))].to_numpy()
+                        for it in range(1, pt.slice_steps):
+                            shear_viscosity[i, j, it] = const * np.trapz(integrand[:it], x=time[:it])
+
+                        coefficient["Shear Viscosity Tensor {}{}_slice {}".format(ax1, ax2, isl)] = shear_viscosity[i, j, :]
+                start_steps += pt.slice_steps
+
+            # Now average the slice
+            col_str = ["Bulk Viscosity_slice {}".format(isl) for isl in range(pt.no_slices)]
+            coefficient["Bulk Viscosity_Mean"] = coefficient[col_str].mean(axis=1)
+            coefficient["Bulk Viscosity_Std"] = coefficient[col_str].std(axis=1)
+
+            sv_str = "Shear Viscosity Tensor"
+            for i, ax1 in enumerate(dim_lbl):
+                for j, ax2 in enumerate(dim_lbl):
+                    col_str = [sv_str + " {}{}_slice {}".format(ax1, ax2, isl) for isl in range(pt.no_slices)]
+                    coefficient[sv_str + " {}{}_Mean".format(ax1, ax2)] = coefficient[col_str].mean(axis=1)
+                    coefficient[sv_str + " {}{}_Std".format(ax1, ax2)] = coefficient[col_str].std(axis=1)
+
+            list_coord = ['xy','xz','yx','yz','zx','zy']
+            col_str = [sv_str + " {}_Mean".format(coord) for coord in list_coord]
+            coefficient["Shear Viscosity_Mean"] = coefficient[col_str].mean(axis=1)
+            coefficient["Shear Viscosity_Std"] = coefficient[col_str].std(axis=1)
+
+            coefficient.columns = pd.MultiIndex.from_tuples([tuple(c.split("_")) for c in coefficient.columns])
+            coefficient.to_hdf(
+                os.path.join(pt.saving_dir, 'Viscosities_' + pt.job_id + '.h5'),
+                mode='w',
+                key='viscosities',
+                index=False)
 
         if plot or figname:
             # Make the plot

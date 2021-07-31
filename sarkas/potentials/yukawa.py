@@ -7,7 +7,7 @@ import math as mt
 
 
 @njit
-def yukawa_force_pppm(r, pot_matrix):
+def force_pppm(r, pot_matrix):
     """ 
     Calculates Potential and Force between two particles when the P3M algorithm is chosen.
 
@@ -45,14 +45,14 @@ def yukawa_force_pppm(r, pot_matrix):
     f2 = (0.5 / r) * np.exp(-kappa * r) * mt.erfc(alpha_r - 0.5 * kappa_alpha) * (1.0 / r + kappa)
     # Derivative of erfc(a r) = 2a/sqrt(pi) e^{-a^2 r^2}* (x/r)
     f3 = (alpha / np.sqrt(np.pi) / r) * (np.exp(-(alpha_r + 0.5 * kappa_alpha) ** 2) * np.exp(kappa_r)
-                                              + np.exp(-(alpha_r - 0.5 * kappa_alpha) ** 2) * np.exp(-kappa_r))
+                                         + np.exp(-(alpha_r - 0.5 * kappa_alpha) ** 2) * np.exp(-kappa_r))
     fr = pot_matrix[0] * (f1 + f2 + f3)
 
     return U_s_r, fr
 
 
 @njit
-def yukawa_force(r, pot_matrix):
+def force(r, pot_matrix):
     """ 
     Calculates Potential and Force between two particles.
 
@@ -77,6 +77,31 @@ def yukawa_force(r, pot_matrix):
     force = U * (1 / r + pot_matrix[1])
 
     return U, force
+
+
+@njit
+def force_deriv(r, pot_matrix):
+    """Calculate the second derivative of the potential.
+
+    Parameters
+    ----------
+
+    r : float
+        Distance between particles
+
+    pot_matrix : numpy.ndarray
+        Values of the potential constants.
+
+    Returns
+    -------
+    f_dev : float
+        Second derivative of potential.
+
+    """
+    kappa_r = pot_matrix[1] * r
+    U2 = pot_matrix[0] * np.exp(-kappa_r) / r ** 3
+    f_dev = U2 * (2.0 * (1.0 + kappa_r) + kappa_r ** 2)
+    return f_dev
 
 
 def update_params(potential, params):
@@ -105,13 +130,13 @@ def update_params(potential, params):
             potential.matrix[0, i, j] = q1 * q2 / params.fourpie0
 
     if potential.method == "PP":
-        potential.force = yukawa_force
+        potential.force = force
         # Force error calculated from eq.(43) in Ref.[1]_
-        params.force_error = np.sqrt( twopi / params.lambda_TF) * np.exp(- potential.rc / params.lambda_TF)
+        params.force_error = np.sqrt(twopi / params.lambda_TF) * np.exp(- potential.rc / params.lambda_TF)
         # Renormalize
         params.force_error *= params.a_ws ** 2 * np.sqrt(params.total_num_ptcls / params.box_volume)
     elif potential.method == "P3M":
-        potential.force = yukawa_force_pppm
+        potential.force = force_pppm
         potential.matrix[2, :, :] = potential.pppm_alpha_ewald
         # PP force error calculation. Note that the equation was derived for a single component plasma.
         kappa_over_alpha = - 0.25 * (potential.matrix[1, 0, 0] / potential.matrix[2, 0, 0]) ** 2

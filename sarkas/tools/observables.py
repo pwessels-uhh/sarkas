@@ -24,6 +24,7 @@ import scipy.stats as scp_stats
 
 from sarkas.utilities.timing import SarkasTimer
 from sarkas.utilities.io import num_sort
+import sarkas.potentials as s_pot
 
 UNITS = [
     # MKS Units
@@ -330,7 +331,8 @@ class Observable:
         if not hasattr(self, 'no_slices'):
             self.no_slices = 1
 
-        self.slice_steps = int(self.production_steps / self.prod_dump_step / self.no_slices) if self.no_dumps < self.no_slices else \
+        self.slice_steps = int(
+            self.production_steps / self.prod_dump_step / self.no_slices) if self.no_dumps < self.no_slices else \
             int(self.no_dumps / self.no_slices)
 
         # Array containing the start index of each species. The last value is equivalent to vel_raw.shape[-1]
@@ -941,7 +943,7 @@ class CurrentCorrelationFunction(Observable):
                 df_mean = temp_dataframe['Longitudinal'][comp_name].mean(level=1, axis='columns')
                 df_mean = df_mean.rename(col_mapper(df_mean.columns, ka_columns), axis=1)
                 # Std
-                ka_columns = ['Longitudinal_' + comp_name + "_Std_ka{} = {:.4f}".format(ik + 1,ka)
+                ka_columns = ['Longitudinal_' + comp_name + "_Std_ka{} = {:.4f}".format(ik + 1, ka)
                               for ik, ka in enumerate(self.ka_values)]
                 df_std = temp_dataframe['Longitudinal'][comp_name].std(level=1, axis='columns')
                 df_std = df_std.rename(col_mapper(df_std.columns, ka_columns), axis=1)
@@ -1163,12 +1165,14 @@ class DynamicStructureFactor(Observable):
             for sp2, sp2_name in enumerate(self.species_names[sp1:], sp1):
                 skw_name = '{}-{}'.format(sp1_name, sp2_name)
                 # Rename the columns with values of ka
-                ka_columns = [skw_name + "_Mean_ka{} = {:.4f}".format(ik + 1, ka) for ik, ka in enumerate(self.ka_values)]
+                ka_columns = [skw_name + "_Mean_ka{} = {:.4f}".format(ik + 1, ka) for ik, ka in
+                              enumerate(self.ka_values)]
                 # Mean: level = 1 corresponds to averaging all the k harmonics with the same magnitude
                 df_mean = temp_dataframe[skw_name].mean(level=1, axis='columns')
                 df_mean = df_mean.rename(col_mapper(df_mean.columns, ka_columns), axis=1)
                 # Std
-                ka_columns = [skw_name + "_Std_ka{} = {:.4f}".format(ik + 1, ka) for ik, ka in enumerate(self.ka_values)]
+                ka_columns = [skw_name + "_Std_ka{} = {:.4f}".format(ik + 1, ka) for ik, ka in
+                              enumerate(self.ka_values)]
                 df_std = temp_dataframe[skw_name].std(level=1, axis='columns')
                 df_std = df_std.rename(col_mapper(df_std.columns, ka_columns), axis=1)
 
@@ -1355,9 +1359,9 @@ class ElectricCurrent(Observable):
                 self.dataframe[col_str + "_Total_slice {}".format(isl)] = tot_acf
 
             # Total current and its ACF
-            self.dataframe[ec_str + "_X_slice {}".format(isl)] = total_current[ 0, :]
-            self.dataframe[ec_str + "_Y_slice {}".format(isl)] = total_current[ 1, :]
-            self.dataframe[ec_str + "_Z_slice {}".format(isl)] = total_current[ 2, :]
+            self.dataframe[ec_str + "_X_slice {}".format(isl)] = total_current[0, :]
+            self.dataframe[ec_str + "_Y_slice {}".format(isl)] = total_current[1, :]
+            self.dataframe[ec_str + "_Z_slice {}".format(isl)] = total_current[2, :]
 
             sp_acf_xx = correlationfunction(total_current[0, :], total_current[0, :])
             sp_acf_yy = correlationfunction(total_current[1, :], total_current[1, :])
@@ -1560,6 +1564,82 @@ class RadialDistributionFunction(Observable):
         tend = self.timer.current()
         self.time_stamp('Radial Distribution Function Calculation', self.timer.time_division(tend - t0))
         self.dataframe.to_csv(self.filename_csv, index=False, encoding='utf-8')
+
+    def compute_thermodynamics(self, potential):
+        """Compute correlational internal energy and pressure.
+         Coulomb and Yukawa potentials only are supported.
+
+        Notes:
+        -----
+        This method returns the correlational energy only. No division by nk_B T is performed.
+
+        In case of Yukawa you need to add the Hartree term if you want the excess quantity.
+        See Sec. IV in Hartmann et al Phys Rev E 72 026409 (2005)
+        or Eq. (24)-(28) in Rosenberg and Kalman Phys Rev E 56 7166 (1997).
+
+        Parameters
+        ----------
+        potential: sarkas.potentials.Potential
+            Potential object of the simulation.
+
+        Returns
+        -------
+        u_corr : numpy.ndarray
+            Correlational Energy calculated from each g_{ab}(r).
+
+        p_corr : numpy.ndarray
+            Correlational Pressure calculated from each g_{ab}(r).
+        """
+        r = np.copy(self.dataframe['Distance'])
+
+        if r[0] == 0.0:
+            r[0] = r[1]
+
+        r2 = r * r
+        r3 = r2 * r
+
+        p_corr = np.zeros(self.no_obs)
+        u_corr = np.zeros(self.no_obs)
+
+        obs_indx = 0
+        for sp1, sp1_name in enumerate(self.species_names):
+            for sp2, sp2_name in enumerate(self.species_names[sp1:], sp1):
+                h_r = self.dataframe['{}-{} RDF'.format(sp1_name, sp2_name)].to_numpy() - 1.0
+
+                if potential.type.lower() == "coulomb":
+                    u_r = potential.matrix[0, sp1, sp2] / r
+                    dv_dr = - potential.matrix[0, sp1, sp2] / r2
+
+                    # Check for finiteness of first element when r[0] = 0.0
+                    if not np.isfinite(dv_dr[0]):
+                        dv_dr[0] = dv_dr[1]
+
+                elif potential.type.lower() == "yukawa":
+                    kappa = potential.matrix[1, sp1, sp2]
+                    u_r = potential.matrix[0, sp1, sp2] * np.exp(-kappa * r) / r
+                    dv_dr = - (1.0 + kappa * r) * np.exp(- kappa * r) / r2
+                    dv_dr *= potential.matrix[0, sp1, sp2]
+
+                    # Check for finiteness of first element when r[0] = 0.0
+                    if not np.isfinite(dv_dr[0]):
+                        dv_dr[0] = dv_dr[1]
+
+                else:
+                    raise ValueError('Unknown potential')
+
+                const = np.pi * self.species_num_dens[sp1] * self.species_num_dens[sp2]
+
+                if self.dimensions == 3:
+                    p_corr[obs_indx] = -2.0 / 3.0 * const * np.trapz(dv_dr * r3 * h_r, x=r)
+                    u_corr[obs_indx] = 2.0 * const * np.trapz(u_r * h_r * r2, x=r)
+
+                else:
+                    p_corr[obs_indx] = -const * np.trapz(dv_dr * r2 * h_r, x=r)
+                    u_corr[obs_indx] = const * np.trapz(u_r * r * h_r, x=r)
+
+                obs_indx += 1
+
+        return u_corr, p_corr
 
     def pretty_print(self):
         """Print radial distribution function calculation parameters for help in choice of simulation parameters."""
@@ -1796,60 +1876,49 @@ class Thermodynamics(Observable):
         # Update the attribute with the passed arguments
         self.__dict__.update(kwargs.copy())
 
-    def compute_pressure_from_rdf(self, r, gr, potential, potential_matrix, **kwargs):
+    def compute_from_rdf(self, rdf, potential, **kwargs):
         """
-        Calculate the Pressure using the radial distribution function
+        Calculate the correlational energy and correlation pressure using
+        sarkas.observables.RadialDistributionFunction.compute_thermodynamics() method.
+        Coulomb and Yukawa potentials only are supported.
 
         Parameters
         ----------
-        r : numpy.ndarray
-            Particles' distances.
+        rdf: sarkas.observables.RadialDistributionFunction
+            Radial Distribution Function object.
 
-        gr : numpy.ndarray
-            Pair distribution function.
+        potential: sarkas.potentials.Potential
+            Potential object.
 
-        potential: str
-            Potential used in the simulation.
-
-        potential_matrix: numpy.ndarray
-            Potential parameters.
-
-        **kwargs :
+        **kwargs:
             These are will overwrite any ``sarkas.core.Parameters`` or default ``sarkas.tools.observables.Observable``
             attributes and/or add new ones.
 
         Returns
         -------
-        pressure : float
-            Pressure divided by :math:`k_BT`.
+        nkT : float
+            Ideal term of the pressure
+
+        u_corr : numpy.ndarray
+            Correlational Energy calculated from each g_{ab}(r).
+
+        p_corr : numpy.ndarray
+            Correlational Pressure calculated from each g_{ab}(r).
+
+        Notes:
+        -----
+        This method returns the correlational energy only.
+        In case of Yukawa you need to add the Hartree term if you want the excess quantity.
+        See Sec. IV in Hartmann et al Phys Rev E 72 026409 (2005)
+        or Eq. (24)-(28) in Rosenberg and Kalman Phys Rev E 56 7166 (1997).
 
         """
         # Update the attribute with the passed arguments
         self.__dict__.update(kwargs.copy())
 
-        r2 = r * r
-        r3 = r2 * r
-
-        if potential.lower() == "coulomb":
-            dv_dr = - 1.0 / r2
-            # Check for finiteness of first element when r[0] = 0.0
-            if not np.isfinite(dv_dr[0]):
-                dv_dr[0] = dv_dr[1]
-            gr -= 1
-        elif potential.lower() == "yukawa":
-            pass
-        elif potential.lower() == "qsp":
-            pass
-        else:
-            raise ValueError('Unknown potential')
-
-        # No. of independent g(r)
-        T = np.mean(self.dataframe["Temperature"])
-        pressure = self.kB * T - 2.0 / 3.0 * np.pi * self.species_num_dens[0] \
-                   * potential_matrix[0, 0, 0] * np.trapz(dv_dr * r3 * gr, x=r)
-        pressure *= self.species_num_dens[0]
-
-        return pressure
+        u_corr, p_corr = rdf.compute_thermodynamics(potential)
+        nkT = self.total_num_density / self.beta
+        return nkT, u_corr, p_corr
 
     def parse(self, phase=None):
         """
@@ -1868,9 +1937,11 @@ class Thermodynamics(Observable):
             self.dataframe = pd.read_csv(self.mag_energy_filename, index_col=False)
             self.fldr = self.magnetization_dir
 
+        self.beta = 1.0 / (self.dataframe["Temperature"].mean() * self.kB)
+
     def statistics(self, quantity="Total Energy", max_no_divisions=100, show=False):
         """
-        ToDo:
+        TODO:
         Parameters
         ----------
         quantity
@@ -2283,7 +2354,7 @@ class VelocityAutoCorrelationFunction(Observable):
         print('Data accessible at: self.dataframe')
 
         print('\nNo. of slices = {}'.format(self.no_slices))
-        print('No. dumps per slice = {}'.format( int(self.slice_steps/self.dump_step)) )
+        print('No. dumps per slice = {}'.format(int(self.slice_steps / self.dump_step)))
 
         print('Time interval of autocorrelation function = {:.4e} [s] ~ {} w_p T'.format(
             self.dt * self.slice_steps,
@@ -2456,7 +2527,7 @@ class DiffusionFlux(Observable):
         print('Data accessible at: self.dataframe')
 
         print('\nNo. of slices = {}'.format(self.no_slices))
-        print('No. dumps per slice = {}'.format( int(self.slice_steps/self.dump_step)) )
+        print('No. dumps per slice = {}'.format(int(self.slice_steps / self.dump_step)))
         print('Time interval of autocorrelation function = {:.4e} [s] ~ {} w_p T'.format(
             self.dt * self.slice_steps,
             int(self.dt * self.slice_steps * self.total_plasma_frequency)))
@@ -2496,6 +2567,13 @@ class PressureTensor(Observable):
 
         self.__name__ = 'pressure_tensor'
         self.__long_name__ = 'Pressure Tensor'
+
+        filename = os.path.join(self.processes_dir[1], "potential.pickle")
+        pot_data = np.load(filename, allow_pickle=True)
+
+        self.potential_matrix = pot_data.matrix
+        self.force = pot_data.force
+        self.rc = pot_data.rc
 
         # if not hasattr(self, 'species_mass_densities'):
         #     self.species_mass_densities = self.species_num_dens * self.species_masses
@@ -2555,13 +2633,17 @@ class PressureTensor(Observable):
                 datap = load_from_restart(self.dump_dir, dump)
                 time[it] = datap["time"]
 
+                virial = s_pot.force_pp.calculate_virial(datap["pos"],
+                                                         datap["id"],
+                                                         self.box_lengths,
+                                                         self.rc,
+                                                         self.potential_matrix, self.force)
                 pressure[it], pressure_tensor_temp[:, :, it] = calc_pressure_tensor(
                     datap["vel"],
-                    datap["virial"],
+                    virial,
                     self.species_masses,
                     self.species_num,
                     self.box_volume)
-            #
 
             if isl == 0:
                 self.dataframe["Time"] = time
@@ -2571,7 +2653,8 @@ class PressureTensor(Observable):
             # This is needed for the bulk viscosity
             delta_pressure = pressure - pressure.mean()
             self.dataframe["Delta Pressure_slice {}".format(isl)] = delta_pressure
-            self.dataframe["Delta Pressure ACF_slice {}".format(isl)] = correlationfunction(delta_pressure, delta_pressure)
+            self.dataframe["Delta Pressure ACF_slice {}".format(isl)] = correlationfunction(delta_pressure,
+                                                                                            delta_pressure)
 
             if self.dimensions == 3:
                 dim_lbl = ['x', 'y', 'z']
@@ -2624,6 +2707,23 @@ class PressureTensor(Observable):
         tend = self.timer.current()
         self.time_stamp("Pressure Tensor and its ACF Calculation", self.timer.time_division(tend - t0))
 
+    def sum_rule(self, beta, rdf, potential):
+
+        r = np.copy(rdf.dataframe["Distance"].to_numpy())
+        if r[0] == 0.0:
+            r[0] = r[1]
+        gr = rdf.dataframe.iloc[:, 1].to_numpy()
+        kappa_r = potential.matrix[1, 0, 0] * r
+        U = potential.matrix[0, 0, 0] * np.exp(-kappa_r) / r
+        force = -(1.0 + kappa_r) * U / r
+        f_dev = U * (2.0 * (1.0 + kappa_r) + kappa_r ** 2) / r ** 2
+
+        integral = np.trapz(r ** 3 * gr * (4 * force + r * f_dev), x=r)
+        integral *= 2.0 * np.pi * self.total_num_density * self.total_num_ptcls / (15 * beta)
+        shear_stress_acf_0 = self.total_num_ptcls / (beta ** 2) + integral
+
+        return shear_stress_acf_0
+
     def pretty_print(self):
         """Print observable parameters for help in choice of simulation parameters."""
 
@@ -2632,7 +2732,7 @@ class PressureTensor(Observable):
         print('Data accessible at: self.dataframe')
 
         print('\nNo. of slices = {}'.format(self.no_slices))
-        print('No. dumps per slice = {}'.format( int(self.slice_steps/self.dump_step)) )
+        print('No. dumps per slice = {}'.format(int(self.slice_steps / self.dump_step)))
         print('Time interval of autocorrelation function = {:.4e} [s] ~ {} w_p T'.format(
             self.dt * self.slice_steps,
             int(self.dt * self.slice_steps * self.total_plasma_frequency)))
@@ -3616,13 +3716,17 @@ def calc_pressure_tensor(vel, virial, species_mass, species_np, box_volume):
     """
     sp_start = 0
     sp_end = 0
+    pressure_tensor = np.zeros((3, 3))
     # Rescale vel and acc of each particle by their individual mass
     for sp, num in enumerate(species_np):
         sp_end += num
-        vel[sp_start: sp_end,:] *= np.sqrt(species_mass[sp])
+        vel[sp_start: sp_end, :] *= np.sqrt(species_mass[sp])
         sp_start += num
 
-    pressure_tensor = (np.transpose(vel) @ vel + virial.sum()) / box_volume
+    for i in range(3):
+        for j in range(3):
+            pressure_tensor[i, j] = (np.sum(vel[:, i] * vel[:, j]) + 0.5 * virial[i, j].sum()) / box_volume
+
     pressure = np.trace(pressure_tensor) / 3.0
 
     return pressure, pressure_tensor
