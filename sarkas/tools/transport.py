@@ -279,43 +279,52 @@ class TransportCoefficient:
                         D[i, 0, it] = np.trapz(integrand_par[:it], x=time[:it])
                         D[i, 1, it] = 0.5 * np.trapz(integrand_perp[:it], x=time[:it])
 
-                    coefficient["{} Parallel Diffusion_slice {}".format(sp, isl)] = D[i, 0, :]
-                    coefficient["{} Perpendicular Diffusion_slice {}".format(sp, isl)] = D[i, 1, :]
+                    coefficient["{} Diffusion_Parallel_slice {}".format(sp, isl)] = D[i, 0, :]
+                    coefficient["{} Diffusion_Perpendicular_slice {}".format(sp, isl)] = D[i, 1, :]
 
             # Add the average and std of perp and par VACF to its dataframe
             for isp, sp in enumerate(params.species_names):
-                par_col_str = ["{} Z Velocity ACF slice {}".format(sp, isl) for isl in range(vacf.no_slices)]
+                sp_vacf_str = "{} ".format(sp) + vacf_str
+                sp_diff_str = "{} ".format(sp) + 'Diffusion'
+                par_col_str = [(sp_vacf_str, 'Z', "slice {}".format(isl)) for isl in range(vacf.no_slices)]
 
-                vacf.dataframe["{} Parallel Velocity ACF avg".format(sp)] = vacf.dataframe[par_col_str].mean(axis=1)
-                vacf.dataframe["{} Parallel Velocity ACF std".format(sp)] = vacf.dataframe[par_col_str].std(axis=1)
+                vacf.dataframe[(sp_vacf_str, 'Parallel', "Mean")] = vacf.dataframe[par_col_str].mean(axis=1)
+                vacf.dataframe[(sp_vacf_str, 'Parallel', "Std")] = vacf.dataframe[par_col_str].std(axis=1)
 
-                x_col_str = ["{} X Velocity ACF slice {}".format(sp, isl) for isl in range(vacf.no_slices)]
-                y_col_str = ["{} Y Velocity ACF slice {}".format(sp, isl) for isl in range(vacf.no_slices)]
+                x_col_str = [(sp_vacf_str, 'X', "slice {}".format(isl)) for isl in range(vacf.no_slices)]
+                y_col_str = [(sp_vacf_str, 'Y', "slice {}".format(isl)) for isl in range(vacf.no_slices)]
 
                 perp_vacf = 0.5 * (np.array(vacf.dataframe[x_col_str]) + np.array(vacf.dataframe[y_col_str]))
-                vacf.dataframe["{} Perpendicular Velocity ACF avg".format(sp)] = perp_vacf.mean(axis=1)
-                vacf.dataframe["{} Perpendicular Velocity ACF std".format(sp)] = perp_vacf.std(axis=1)
+                vacf.dataframe[(sp_vacf_str, 'Perpendicular', "Mean")] = perp_vacf.mean(axis=1)
+                vacf.dataframe[(sp_vacf_str, 'Perpendicular', "Std")] = perp_vacf.std(axis=1)
 
                 # Average and std of each diffusion coefficient.
-                par_col_str = ["{} Parallel Diffusion slice {}".format(sp, isl) for isl in range(vacf.no_slices)]
-                perp_col_str = ["{} Perpendicular Diffusion slice {}".format(sp, isl) for isl in range(vacf.no_slices)]
+                par_col_str = [sp_diff_str + "_Parallel_slice {}".format(isl) for isl in range(vacf.no_slices)]
+                perp_col_str = [sp_diff_str + "_Perpendicular_slice {}".format(isl) for isl in range(vacf.no_slices)]
 
-                coefficient["{} Parallel Diffusion avg".format(sp)] = coefficient[par_col_str].mean(axis=1)
-                coefficient["{} Parallel Diffusion std".format(sp)] = coefficient[par_col_str].std(axis=1)
+                coefficient[sp_diff_str + "_Parallel_Mean"] = coefficient[par_col_str].mean(axis=1)
+                coefficient[sp_diff_str + "_Parallel_Std"] = coefficient[par_col_str].std(axis=1)
 
-                coefficient["{} Perpendicular Diffusion avg".format(sp)] = coefficient[perp_col_str].mean(axis=1)
-                coefficient["{} Perpendicular Diffusion std".format(sp)] = coefficient[perp_col_str].std(axis=1)
+                coefficient[sp_diff_str + "_Perpendicular_Mean"] = coefficient[perp_col_str].mean(axis=1)
+                coefficient[sp_diff_str + "_Perpendicular_Std"] = coefficient[perp_col_str].std(axis=1)
 
+            # TODO: Fix this hack. We should be able to add data to HDF instead of removing it and rewriting it.
+            # Remove the previous hdf
+            os.remove(vacf.filename_hdf)
             # Save the updated dataframe
-            vacf.dataframe.to_csv(vacf.filename_csv, index=False, encoding='utf-8')
+            vacf.dataframe.to_hdf(vacf.filename_hdf, mode = 'w', key=vacf.__name__)
 
         # Endif magnetized.
         coefficient.columns = pd.MultiIndex.from_tuples([tuple(c.split("_")) for c in coefficient.columns])
+        coeff_filename = os.path.join(vacf.saving_dir, 'Diffusion_' + vacf.job_id + '.h5')
+        if os.path.exists(coeff_filename):
+            # Remove the previous hdf
+            os.remove(vacf.filename_hdf)
+
         # Save the coefficient's data
-        coefficient.to_hdf(
-            os.path.join(vacf.saving_dir, 'Diffusion_' + vacf.job_id + '.h5'),
-            mode='w',
-            key='diffusion')
+        coefficient.to_hdf(coeff_filename,
+                mode='w',
+                key='diffusion')
 
         if plot or figname:
             # Make the plot
@@ -348,17 +357,19 @@ class TransportCoefficient:
                     ax2.fill_between(xmul * time, ymul * (d_avg + d_std), ymul * (d_avg - d_std), alpha=0.2)
             else:
                 for isp, sp in enumerate(params.species_names):
-                    par_acf_avg = vacf.dataframe["{} Parallel Velocity ACF avg".format(sp)]
-                    par_acf_std = vacf.dataframe["{} Parallel Velocity ACF std".format(sp)]
+                    sp_vacf_str = "{} ".format(sp) + vacf_str
+                    sp_diff_str = "{} ".format(sp) + 'Diffusion'
+                    par_acf_avg = vacf.dataframe[(sp_vacf_str, 'Parallel', "Mean")]
+                    par_acf_std = vacf.dataframe[(sp_vacf_str, 'Parallel', "Std")]
 
-                    par_d_avg = coefficient["{} Parallel Diffusion avg".format(sp)]
-                    par_d_std = coefficient["{} Parallel Diffusion std".format(sp)]
+                    par_d_avg = coefficient[(sp_diff_str, 'Parallel', "Mean")]
+                    par_d_std = coefficient[(sp_diff_str, 'Parallel', "Std")]
 
-                    perp_acf_avg = vacf.dataframe["{} Perpendicular Velocity ACF avg".format(sp)]
-                    perp_acf_std = vacf.dataframe["{} Perpendicular Velocity ACF std".format(sp)]
+                    perp_acf_avg = vacf.dataframe[(sp_vacf_str, 'Perpendicular', "Mean")]
+                    perp_acf_std = vacf.dataframe[(sp_vacf_str, 'Perpendicular', "Std")]
 
-                    perp_d_avg = coefficient["{} Perpendicular Diffusion avg".format(sp)]
-                    perp_d_std = coefficient["{} Perpendicular Diffusion std".format(sp)]
+                    perp_d_avg = coefficient[(sp_diff_str, 'Perpendicular', "Mean")]
+                    perp_d_std = coefficient[(sp_diff_str, 'Perpendicular', "Std")]
 
                     # Calculate axis multipliers and labels
                     xmul, ymul, _, _, xlbl, ylbl = obs.plot_labels(time, perp_d_avg, "Time", "Diffusion", vacf.units)

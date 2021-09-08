@@ -994,10 +994,10 @@ class CurrentCorrelationFunction(Observable):
         print('\tNo. of slices = {}'.format(self.no_slices))
         print('\tNo. dumps per slice = {}'.format(self.slice_steps))
         print('\tFrequency step dw = 2 pi (no_slices * prod_dump_step)/(production_steps * dt)')
-        print('\tdw = {:1.4f} w_p = {:1.4e} [Hz]'.format(
+        print('\tdw = {:1.4f} w_p = {:1.4e} [rad/s]'.format(
             self.w_min / self.total_plasma_frequency, self.w_min))
         print('\tMaximum Frequency w_max = 2 pi /(prod_dump_step * dt)')
-        print('\tw_max = {:1.4f} w_p = {:1.4e} [Hz]'.format(
+        print('\tw_max = {:1.4f} w_p = {:1.4e} [rad/s]'.format(
             self.w_max / self.total_plasma_frequency, self.w_max))
 
         print('\n\nWavevector parameters:')
@@ -1204,10 +1204,10 @@ class DynamicStructureFactor(Observable):
         print('\tNo. of slices = {}'.format(self.no_slices))
         print('\tNo. dumps per slice = {}'.format(self.slice_steps))
         print('\tFrequency step dw = 2 pi (no_slices * prod_dump_step)/(production_steps * dt)')
-        print('\tdw = {:1.4f} w_p = {:1.4e} [Hz]'.format(
+        print('\tdw = {:1.4f} w_p = {:1.4e} [rad/s]'.format(
             self.w_min / self.total_plasma_frequency, self.w_min))
         print('\tMaximum Frequency w_max = 2 pi /(prod_dump_step * dt)')
-        print('\tw_max = {:1.4f} w_p = {:1.4e} [Hz]'.format(
+        print('\tw_max = {:1.4f} w_p = {:1.4e} [rad/s]'.format(
             self.w_max / self.total_plasma_frequency, self.w_max))
 
         print('\n\nWavevector parameters:')
