@@ -2186,21 +2186,22 @@ class Thermodynamics(Observable):
             y_coord -= 0.25
             Info_plot.text(0., y_coord, "Total $N$ = {}".format(process.parameters.total_num_ptcls))
             Info_plot.text(0., y_coord - 0.5, "Thermostat: {}".format(process.thermostat.type))
-            Info_plot.text(0., y_coord - 1., "Berendsen rate = {:.2f}".format(process.thermostat.relaxation_rate))
+            Info_plot.text(0., y_coord - 1., "  Berendsen rate = {:.2f}".format(process.thermostat.relaxation_rate))
             Info_plot.text(0., y_coord - 1.5, "Potential: {}".format(process.potential.type))
-            Info_plot.text(0., y_coord - 2., "Tot Force Error = {:.2e}".format(process.parameters.force_error))
+            Info_plot.text(0., y_coord - 2., "  Tot Force Error = {:.2e}".format(process.parameters.force_error))
             delta_t = dt_mul * process.integrator.dt
-            Info_plot.text(0., y_coord - 2.5, "$\Delta t$ = {:.2f} {}".format(delta_t, dt_lbl))
-            Info_plot.text(0., y_coord - 3., "Step interval = {}".format(self.dump_step))
-            Info_plot.text(0., y_coord - 3.5,
+            Info_plot.text(0., y_coord - 2.5, "Integrator = {}".format(process.integrator.type))
+            Info_plot.text(0., y_coord - 3.0, "  $\Delta t$ = {:.2f} {}".format(delta_t, dt_lbl))
+            Info_plot.text(0., y_coord - 3.5, "Step interval = {}".format(self.dump_step))
+            Info_plot.text(0., y_coord - 4.,
                            "Step interval time = {:.2f} {}".format(self.dump_step * delta_t, dt_lbl))
-            Info_plot.text(0., y_coord - 4., "Completed steps = {}".format(completed_steps))
-            Info_plot.text(0., y_coord - 4.5,
+            Info_plot.text(0., y_coord - 4.5, "Completed steps = {}".format(completed_steps))
+            Info_plot.text(0., y_coord - 5.,
                            "Completed time = {:.2f} {}".format(completed_steps * delta_t / dt_mul * time_mul, time_lbl))
-            Info_plot.text(0., y_coord - 5., "Total timesteps = {}".format(self.no_steps))
-            Info_plot.text(0., y_coord - 5.5,
+            Info_plot.text(0., y_coord - 5.5, "Total timesteps = {}".format(self.no_steps))
+            Info_plot.text(0., y_coord - 6.0,
                            "Total time = {:.2f} {}".format(self.no_steps * delta_t / dt_mul * time_mul, time_lbl))
-            Info_plot.text(0., y_coord - 6.,
+            Info_plot.text(0., y_coord - 6.5,
                            "{:1.2f} % Completed".format(100 * completed_steps / self.no_steps))
             Info_plot.axis('off')
 
