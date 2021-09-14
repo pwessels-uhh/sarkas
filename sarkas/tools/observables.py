@@ -1976,10 +1976,12 @@ class Thermodynamics(Observable):
             fig.show()
 
     def temp_energy_plot(self, process,
+                         info_list: list = None,
                          phase: str = None,
                          show: bool = False,
                          publication: bool = False,
-                         figname: str = None):
+                         figname: str = None,
+                         ):
         """
         Plot Temperature and Energy as a function of time with their cumulative sum and average.
 
@@ -2168,6 +2170,7 @@ class Thermodynamics(Observable):
                                                      "Time",
                                                      "Energy",
                                                      self.units)
+
             # Information section
             Info_plot.axis([0, 10, 0, 10])
             Info_plot.grid(False)
@@ -2184,25 +2187,32 @@ class Thermodynamics(Observable):
                 y_coord -= 1.5
 
             y_coord -= 0.25
-            Info_plot.text(0., y_coord, "Total $N$ = {}".format(process.parameters.total_num_ptcls))
-            Info_plot.text(0., y_coord - 0.5, "Thermostat: {}".format(process.thermostat.type))
-            Info_plot.text(0., y_coord - 1., "  Berendsen rate = {:.2f}".format(process.thermostat.relaxation_rate))
-            Info_plot.text(0., y_coord - 1.5, "Potential: {}".format(process.potential.type))
-            Info_plot.text(0., y_coord - 2., "  Tot Force Error = {:.2e}".format(process.parameters.force_error))
             delta_t = dt_mul * process.integrator.dt
-            Info_plot.text(0., y_coord - 2.5, "Integrator = {}".format(process.integrator.type))
-            Info_plot.text(0., y_coord - 3.0, "  $\Delta t$ = {:.2f} {}".format(delta_t, dt_lbl))
-            Info_plot.text(0., y_coord - 3.5, "Step interval = {}".format(self.dump_step))
-            Info_plot.text(0., y_coord - 4.,
-                           "Step interval time = {:.2f} {}".format(self.dump_step * delta_t, dt_lbl))
-            Info_plot.text(0., y_coord - 4.5, "Completed steps = {}".format(completed_steps))
-            Info_plot.text(0., y_coord - 5.,
-                           "Completed time = {:.2f} {}".format(completed_steps * delta_t / dt_mul * time_mul, time_lbl))
-            Info_plot.text(0., y_coord - 5.5, "Total timesteps = {}".format(self.no_steps))
-            Info_plot.text(0., y_coord - 6.0,
-                           "Total time = {:.2f} {}".format(self.no_steps * delta_t / dt_mul * time_mul, time_lbl))
-            Info_plot.text(0., y_coord - 6.5,
-                           "{:1.2f} % Completed".format(100 * completed_steps / self.no_steps))
+            if info_list is None:
+                info_list = [
+                    "Total $N$ = {}".format(process.parameters.total_num_ptcls),
+                    "Thermostat: {}".format(process.thermostat.type),
+                    "  Berendsen rate = {:.2f}".format(process.thermostat.relaxation_rate),
+                    "  Equilibration cycles = {}".format(
+                        int(process.parameters.equilibration_steps * process.integrator.dt * process.parameters.total_plasma_frequency)),
+                    "Potential: {}".format(process.potential.type),
+                    "  Tot Force Error = {:.2e}".format(process.parameters.force_error),
+                    "Integrator: {}".format(process.integrator.type),
+                    "  $\Delta t$ = {:.2f} {}".format(delta_t, dt_lbl),
+                    # "Step interval = {}".format(self.dump_step),
+                    # "Step interval time = {:.2f} {}".format(self.dump_step * delta_t, dt_lbl),
+                    "Completed steps = {}".format(completed_steps),
+                    "Total steps = {}".format(self.no_steps),
+                    "{:1.2f} % Completed".format(100 * completed_steps / self.no_steps),
+                    # "Completed time = {:.2f} {}".format(completed_steps * delta_t / dt_mul * time_mul, time_lbl),
+                    "Production time = {:.2f} {}".format(self.no_steps * delta_t / dt_mul * time_mul, time_lbl),
+                    "Production cycles = {}".format(
+                        int(process.parameters.production_steps * process.integrator.dt * process.parameters.total_plasma_frequency))
+                ]
+            for itext, text_str in enumerate(info_list):
+                Info_plot.text(0., y_coord, text_str)
+                y_coord -= 0.5
+
             Info_plot.axis('off')
 
         if not publication:
@@ -2712,7 +2722,7 @@ class PressureTensor(Observable):
 
         r = np.copy(rdf.dataframe["Distance"].to_numpy())
         if r[0] == 0.0:
-            r[0] = r[1]
+            r[0] = np.copy(r[1])
         gr = rdf.dataframe.iloc[:, 1].to_numpy()
         kappa_r = potential.matrix[1, 0, 0] * r
         U = potential.matrix[0, 0, 0] * np.exp(-kappa_r) / r
