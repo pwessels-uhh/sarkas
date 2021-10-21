@@ -5,7 +5,7 @@ import numpy as np
 from sarkas.potentials.force_pm import force_optimized_green_function as gf_opt
 from sarkas.potentials import force_pm, force_pp
 import fdint
-
+import fmm3dpy as fmm
 
 class Potential:
     """
@@ -141,7 +141,7 @@ class Potential:
 
         """
         # Check for cutoff radius
-        if not self.type.lower() == 'fmm':
+        if not self.method.lower() == 'fmm':
             self.linked_list_on = True  # linked list on
             if not hasattr(self, "rc"):
                 print("\nWARNING: The cut-off radius is not defined. L/2 = {:1.4e} will be used as rc".format(
@@ -159,6 +159,12 @@ class Potential:
                 self.rs = 0.0
             else:
                 print("\nWARNING: Short-range cut-off of {:1.4e} enabled. Use this feature with care!".format(self.rs))
+
+        else:
+                if self.type.lower() == 'coulomb':
+                    params.force_error = 1.0e-7
+                else:
+                    params.force_error = 1.0e-5
 
         # Check for electrons as dynamical species
         if self.type.lower() == 'qsp' or self.type.lower() == 'coulomb':
@@ -202,22 +208,27 @@ class Potential:
 
             from sarkas.potentials import coulomb
             coulomb.update_params(self, params)
+
         # Yukawa potential
         if self.type.lower() == "yukawa":
             from sarkas.potentials import yukawa
             yukawa.update_params(self, params)
+
         # exact gradient-corrected screening (EGS) potential
         if self.type.lower() == "egs":
             from sarkas.potentials import egs
             egs.update_params(self, params)
+
         # Lennard-Jones potential
         if self.type.lower() == "lj":
             from sarkas.potentials import lennardjones as lj
             lj.update_params(self, params)
+
         # Moliere potential
         if self.type.lower() == "moliere":
             from sarkas.potentials import moliere
             moliere.update_params(self, params)
+
         # QSP potential
         if self.type.lower() == "qsp":
             from sarkas.potentials import qsp
@@ -234,6 +245,7 @@ class Potential:
         self.box_volume = params.box_volume
         self.pbox_volume = params.pbox_volume
         self.fourpie0 = params.fourpie0
+        self.lambda_TF = params.lambda_TF
         self.QFactor = params.QFactor
         self.total_net_charge = params.total_net_charge
         self.measure = params.measure
@@ -432,26 +444,23 @@ class Potential:
 
         self.force_error = params.force_error
 
-    # def update_fmm(ptcls, params):
-    #     """
-    #
-    #     Parameters
-    #     ----------
-    #     ptcls
-    #     params
-    #
-    #     Returns
-    #     -------
-    #
-    #     """
-    #
-    #     if params.potential.type == 'Coulomb':
-    #         out_fmm = fmm.lfmm3d(eps=1.0e-07, sources=np.transpose(ptcls.pos), charges=ptcls.charges, pg=2)
-    #     elif params.potential.type == 'Yukawa':
-    #         out_fmm = fmm.hfmm3d(eps=1.0e-05, zk=1j / params.lambda_TF, sources=np.transpose(ptcls.pos),
-    #                          charges=ptcls.charges, pg=2)
-    #
-    #     potential_energy = ptcls.charges @ out_fmm.pot.real * 4.0 * np.pi / params.fourpie0
-    #     ptcls.acc = - np.transpose(ptcls.charges * out_fmm.grad.real / ptcls.mass) / params.fourpie0
-    #
-    #     return potential_energy
+    def update_fmm(self, ptcls):
+        """Calculate particles' potential and accelerations using FMM method.
+
+        Parameters
+        ----------
+        ptcls : sarkas.core.Particles
+            Particles' data
+
+        """
+
+        if self.type.lower() == 'coulomb':
+            out_fmm = fmm.lfmm3d(eps=1.0e-07, sources=np.transpose(ptcls.pos), charges=ptcls.charges, pg=2)
+        elif self.type.lower() == 'yukawa':
+            out_fmm = fmm.hfmm3d(eps=1.0e-05, zk=1j / self.lambda_TF, sources=np.transpose(ptcls.pos),
+                             charges=ptcls.charges, pg=2)
+
+        potential_energy = ptcls.charges @ out_fmm.pot.real * 4.0 * np.pi / self.fourpie0
+        ptcls.acc = - np.transpose(ptcls.charges * out_fmm.grad.real / ptcls.masses) / self.fourpie0
+
+        return potential_energy

@@ -866,7 +866,13 @@ class Particles:
 
         elif params.load_method in ['uniform', 'random_no_reject']:
             self.pos = self.uniform_no_reject(params.box_lengths/2 - params.pbox_lengths/2, params.box_lengths/2 + params.pbox_lengths/2)
-
+        elif params.load_method == 'gaussian':
+            sp_start = 0
+            sp_end = 0
+            for sp, sp_num in enumerate(params.species_num):
+                sp_end += sp_num
+                self.pos[sp_start:sp_end,:] = self.gaussian(params.box_lengths[0]/2., params.load_gauss_sigma[sp], sp_num)
+                sp_start += sp_num
         else:
             raise AttributeError('Incorrect particle placement scheme specified.')
 
