@@ -141,6 +141,11 @@ class Potential:
 
         """
         # Check for cutoff radius
+        if not hasattr(self, 'rs'):
+            self.rs = 0.0
+        else:
+            print("\nWARNING: Short-range cut-off of {:1.4e} enabled. Use this feature with care!".format(self.rs))
+
         if not self.method.lower() == 'fmm':
             self.linked_list_on = True  # linked list on
             if not hasattr(self, "rc"):
@@ -154,12 +159,6 @@ class Potential:
                       "will be used as rc")
                 self.rc = params.box_lengths.min() / 2.
                 self.linked_list_on = False  # linked list off
-
-            if not hasattr(self, 'rs'):
-                self.rs = 0.0
-            else:
-                print("\nWARNING: Short-range cut-off of {:1.4e} enabled. Use this feature with care!".format(self.rs))
-
         else:
                 if self.type.lower() == 'coulomb':
                     params.force_error = 1.0e-7
