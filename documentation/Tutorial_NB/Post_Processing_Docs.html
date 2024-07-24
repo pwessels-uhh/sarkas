@@ -1,153 +1,1651 @@
-  <!DOCTYPE html>
+  
+<!DOCTYPE html>
 
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Data Analysis &#8212; Sarkas 1.0.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+<meta property="og:title" content="Data Analysis" />
+  
+<meta property="og:type" content="website" />
+  
+<meta property="og:url" content="https://murillo-group.github.io/sarkas/documentation/Tutorial_NB/Post_Processing_Docs.html" />
+  
+<meta property="og:site_name" content="SARKAS: Python MD code for plasma physics" />
+  
+<meta property="og:description" content="Once the simulation is complete we enter the Post Processing stage where we measure physical quantities and calculate transport coefficients. Sarkas was developed to make this process as simple and..." />
+  
+<meta property="twitter:card" content="summary">
+<meta property="twitter:title" content="SARKAS: Python MD code for plasma physics">
+<meta property="twitter:description" content="A fast pure-Python molecular dynamics suite for non-ideal plasmas.">
+    <title>Data Analysis &#8212; Sarkas 1.1.0 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap" />
-    <link rel="stylesheet" type="text/css" href="../../_static/my-style.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     <link rel="stylesheet" href="../../_static/my-styles.css" type="text/css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
     
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script src="../../_static/design-tabs.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
-    <script src="../../_static/js/myscript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="text/javascript" src="../../_static/language_data.js"></script>
   
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Theoretical Background" href="../../theory/theory.html" />
+    <link rel="next" title="Available Features" href="../features.html" />
     <link rel="prev" title="Running a Simulation" href="Simulation_Docs.html" />
-<meta charset='utf-8'>
-<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
 
-  </head><body>
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
 
-  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="../../index.html"><span><img src="../../_static/logo_s_orange.png"></span>
-          ARKAS</a>
-        <span class="navbar-text navbar-version pull-left"><b></b></span>
-      </div>
+    
+    <div class="container-fluid" id="banner"></div>
 
-        <div class="collapse navbar-collapse nav-collapse">
-          <ul class="nav navbar-nav">
-            
-                <li><a href="../get_started.html">Get Started</a></li>
-                <li><a href="../../examples/examples.html">Examples</a></li>
-                <li><a href="../../code_development/code_dev.html">Code Development</a></li>
-                <li><a href="../../api/api.html">API</a></li>
-                <li><a href="../../credits/credits.html">Credits</a></li>
-            
-            
-              <li class="dropdown globaltoc-container">
-  <a role="button"
-     id="dLabelGlobalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="../../index.html">Site <b class="caret"></b></a>
-  <ul class="dropdown-menu globaltoc"
-      role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Documentation:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../why_sarkas.html">Why Sarkas</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../get_started.html">Get Started</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Theory:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../theory/theory.html">Theoretical Background</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Code Dev:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../code_development/code_dev.html">Code Development</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Simulations:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/examples.html">Examples</a></li>
-</ul>
-<p class="caption"><span class="caption-text">API:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">API reference</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Credits:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../credits/credits.html">Credits</a></li>
-</ul>
-</ul>
-</li>
-              
-                <li class="dropdown">
-  <a role="button"
-     id="dLabelLocalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="#">Page <b class="caret"></b></a>
-  <ul class="dropdown-menu localtoc"
-      role="menu"
-      aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Data Analysis</a><ul>
-<li><a class="reference internal" href="#Thermodynamics">Thermodynamics</a></li>
-<li><a class="reference internal" href="#Radial-Distribution-Function">Radial Distribution Function</a></li>
-<li><a class="reference internal" href="#Static-Structure-Factor">Static Structure Factor</a></li>
-<li><a class="reference internal" href="#Dynamic-Structure-Factor">Dynamic Structure Factor</a></li>
-<li><a class="reference internal" href="#Current-Correlation-Functions">Current Correlation Functions</a></li>
-</ul>
-</li>
-</ul>
-</ul>
-</li>
-              
-            
-            
-            
-            
-            
-              <li class="hidden-sm"></li>
-            
-          </ul>
+    
 
+    <div class="container-xl">
+      <div class="row">
           
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/Sarkas_v1_for_dark_bg.svg" class="logo" alt="logo">
+      
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../index.html">
+                    SARKAS: Python MD code for plasma physics
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Documentation:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why_sarkas.html">
+   Why Sarkas
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../get_started.html">
+   Get Started
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="Quickstart.html">
+     Quickstart
+    </a>
+   </li>
+   <li class="toctree-l2 current active has-children">
+    <a class="reference internal" href="../tutorial.html">
+     Tutorial
+    </a>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="current">
+     <li class="toctree-l3">
+      <a class="reference internal" href="../input_file.html">
+       Input File
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="Pre_Simulation_Testing.html">
+       Pre Simulation Testing
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="Simulation_Docs.html">
+       Running a Simulation
+      </a>
+     </li>
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
+       Data Analysis
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../features.html">
+   Available Features
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../Features_files/integrators.html">
+     Integrators
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../Features_files/Berendsen_NB/Berendsen_Thermostat.html">
+     Thermostats
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../Features_files/potentials.html">
+     Potentials
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Theory:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../theory/theory.html">
+   Theoretical Background
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../theory/PPPM.html">
+     Particle-Particle Particle-Mesh Algorithm
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../theory/force_error.html">
+     Force Error
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../theory/coupling_constant.html">
+     Coupling Constant
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../theory/electron_properties.html">
+     Electron Properties
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../theory/references.html">
+     References
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Contributing:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../contributing/contributing.html">
+   Contributing to Sarkas
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../contributing/dev_setup.html">
+     Setup
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../contributing/dev_report_issues.html">
+     Reporting Issues
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../contributing/dev_docs.html">
+     Documentation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../contributing/dev_example.html">
+     Example of a contribution
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Simulations:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../examples/examples.html">
+   Examples
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/OCP/OCP.html">
+     One Component Plasma (OCP)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/BIM/H-He_Mixture.html">
+     H-He Mixture
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/QSP/QSP_Tutorial.html">
+     Quantum Statistical Potential Simulation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/Magnetized_OCP/Magnetized_Plasma.html">
+     Magnetized Plasma
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/Yukawa_vs_EGS/Yukawa_vs_Exact-Gradient_Corrected_Potential.html">
+     Yukawa vs Egs potential
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/YOCP/YOCP_viscosity.html">
+     Viscosity Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/Moliere/Moliere_Simulation.html">
+     Moliere Potential
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/UNP/UCP_Experiment_Validation.html">
+     MD for Experiment Validation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../examples/Ultrafast_EC/Ultrafast_EC_Validation.html">
+     Ultrafast electron cooling in an expanding ultracold plasma
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  API:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../api/api.html">
+   API reference
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/core_pckg/sarkas.core.html">
+     sarkas.core
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+    <label for="toctree-checkbox-8">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/core_pckg/sarkas.core.Parameters.html">
+       sarkas.core.Parameters
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/>
+      <label for="toctree-checkbox-9">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.__init__.html">
+         sarkas.core.Parameters.__init__
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.calc_coupling_constant.html">
+         sarkas.core.Parameters.calc_coupling_constant
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.calc_electron_properties.html">
+         sarkas.core.Parameters.calc_electron_properties
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.calc_magnetic_parameters.html">
+         sarkas.core.Parameters.calc_magnetic_parameters
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.calc_parameters.html">
+         sarkas.core.Parameters.calc_parameters
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.check_units.html">
+         sarkas.core.Parameters.check_units
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.create_species_arrays.html">
+         sarkas.core.Parameters.create_species_arrays
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.from_dict.html">
+         sarkas.core.Parameters.from_dict
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.pretty_print.html">
+         sarkas.core.Parameters.pretty_print
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.set_species_attributes.html">
+         sarkas.core.Parameters.set_species_attributes
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.setup.html">
+         sarkas.core.Parameters.setup
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Parameters_mthds/sarkas.core.Parameters.sim_box_setup.html">
+         sarkas.core.Parameters.sim_box_setup
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/core_pckg/sarkas.processes.html">
+     sarkas.processes
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/>
+    <label for="toctree-checkbox-10">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/core_pckg/sarkas.processes.PostProcess.html">
+       sarkas.processes.PostProcess
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/>
+      <label for="toctree-checkbox-11">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PostProcess_mthds/sarkas.processes.PostProcess.__init__.html">
+         sarkas.processes.PostProcess.__init__
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PostProcess_mthds/sarkas.processes.PostProcess.common_parser.html">
+         sarkas.processes.PostProcess.common_parser
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PostProcess_mthds/sarkas.processes.PostProcess.evolve_loop.html">
+         sarkas.processes.PostProcess.evolve_loop
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PostProcess_mthds/sarkas.processes.PostProcess.initialization.html">
+         sarkas.processes.PostProcess.initialization
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PostProcess_mthds/sarkas.processes.PostProcess.run.html">
+         sarkas.processes.PostProcess.run
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PostProcess_mthds/sarkas.processes.PostProcess.setup.html">
+         sarkas.processes.PostProcess.setup
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PostProcess_mthds/sarkas.processes.PostProcess.setup_from_simulation.html">
+         sarkas.processes.PostProcess.setup_from_simulation
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/core_pckg/sarkas.processes.PreProcess.html">
+       sarkas.processes.PreProcess
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/>
+      <label for="toctree-checkbox-12">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.__init__.html">
+         sarkas.processes.PreProcess.__init__
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.analytical_approx_pppm.html">
+         sarkas.processes.PreProcess.analytical_approx_pppm
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.common_parser.html">
+         sarkas.processes.PreProcess.common_parser
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.evolve_loop.html">
+         sarkas.processes.PreProcess.evolve_loop
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.green_function_timer.html">
+         sarkas.processes.PreProcess.green_function_timer
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.initialization.html">
+         sarkas.processes.PreProcess.initialization
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.make_color_map.html">
+         sarkas.processes.PreProcess.make_color_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.make_fit_plot.html">
+         sarkas.processes.PreProcess.make_fit_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.make_force_v_timing_plot.html">
+         sarkas.processes.PreProcess.make_force_v_timing_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.make_lagrangian_plot.html">
+         sarkas.processes.PreProcess.make_lagrangian_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.make_line_plot.html">
+         sarkas.processes.PreProcess.make_line_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.make_pppm_color_map.html">
+         sarkas.processes.PreProcess.make_pppm_color_map
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.make_pppm_line_plot.html">
+         sarkas.processes.PreProcess.make_pppm_line_plot
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.make_timing_plots.html">
+         sarkas.processes.PreProcess.make_timing_plots
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.postproc_estimates.html">
+         sarkas.processes.PreProcess.postproc_estimates
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.pppm_approximation.html">
+         sarkas.processes.PreProcess.pppm_approximation
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.remove_preproc_dumps.html">
+         sarkas.processes.PreProcess.remove_preproc_dumps
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.run.html">
+         sarkas.processes.PreProcess.run
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.setup.html">
+         sarkas.processes.PreProcess.setup
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.time_acceleration.html">
+         sarkas.processes.PreProcess.time_acceleration
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.time_evolution_loop.html">
+         sarkas.processes.PreProcess.time_evolution_loop
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.time_n_space_estimates.html">
+         sarkas.processes.PreProcess.time_n_space_estimates
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/PreProcess_mthds/sarkas.processes.PreProcess.timing_study_calculation.html">
+         sarkas.processes.PreProcess.timing_study_calculation
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/core_pckg/sarkas.processes.Process.html">
+       sarkas.processes.Process
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/>
+      <label for="toctree-checkbox-13">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Process_mthds/sarkas.processes.Process.__init__.html">
+         sarkas.processes.Process.__init__
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Process_mthds/sarkas.processes.Process.common_parser.html">
+         sarkas.processes.Process.common_parser
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Process_mthds/sarkas.processes.Process.evolve_loop.html">
+         sarkas.processes.Process.evolve_loop
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Process_mthds/sarkas.processes.Process.initialization.html">
+         sarkas.processes.Process.initialization
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Process_mthds/sarkas.processes.Process.setup.html">
+         sarkas.processes.Process.setup
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/core_pckg/sarkas.processes.Simulation.html">
+       sarkas.processes.Simulation
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/>
+      <label for="toctree-checkbox-14">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.__init__.html">
+         sarkas.processes.Simulation.__init__
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.check_restart.html">
+         sarkas.processes.Simulation.check_restart
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.common_parser.html">
+         sarkas.processes.Simulation.common_parser
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.equilibrate.html">
+         sarkas.processes.Simulation.equilibrate
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.evolve_loop.html">
+         sarkas.processes.Simulation.evolve_loop
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.initialization.html">
+         sarkas.processes.Simulation.initialization
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.magnetize.html">
+         sarkas.processes.Simulation.magnetize
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.produce.html">
+         sarkas.processes.Simulation.produce
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.run.html">
+         sarkas.processes.Simulation.run
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/core_pckg/Simulation_mthds/sarkas.processes.Simulation.setup.html">
+         sarkas.processes.Simulation.setup
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.html">
+     sarkas.potentials
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/>
+    <label for="toctree-checkbox-15">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.core.html">
+       sarkas.potentials.core
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/>
+      <label for="toctree-checkbox-16">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.core.Potential.html">
+         sarkas.potentials.core.Potential
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.coulomb.html">
+       sarkas.potentials.coulomb
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/>
+      <label for="toctree-checkbox-17">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.coulomb.pretty_print_info.html">
+         sarkas.potentials.coulomb.pretty_print_info
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.coulomb.update_params.html">
+         sarkas.potentials.coulomb.update_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.egs.html">
+       sarkas.potentials.egs
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/>
+      <label for="toctree-checkbox-18">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.egs.pretty_print_info.html">
+         sarkas.potentials.egs.pretty_print_info
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.egs.update_params.html">
+         sarkas.potentials.egs.update_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.force_pm.html">
+       sarkas.potentials.force_pm
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.force_pp.html">
+       sarkas.potentials.force_pp
+      </a>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.hs_yukawa.html">
+       sarkas.potentials.hs_yukawa
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/>
+      <label for="toctree-checkbox-19">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.hs_yukawa.pretty_print_info.html">
+         sarkas.potentials.hs_yukawa.pretty_print_info
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.hs_yukawa.update_params.html">
+         sarkas.potentials.hs_yukawa.update_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.lennardjones.html">
+       sarkas.potentials.lennardjones
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/>
+      <label for="toctree-checkbox-20">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.lennardjones.pretty_print_info.html">
+         sarkas.potentials.lennardjones.pretty_print_info
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.lennardjones.update_params.html">
+         sarkas.potentials.lennardjones.update_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.moliere.html">
+       sarkas.potentials.moliere
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/>
+      <label for="toctree-checkbox-21">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.moliere.update_params.html">
+         sarkas.potentials.moliere.update_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.qsp.html">
+       sarkas.potentials.qsp
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/>
+      <label for="toctree-checkbox-22">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.qsp.pretty_print_info.html">
+         sarkas.potentials.qsp.pretty_print_info
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.qsp.update_params.html">
+         sarkas.potentials.qsp.update_params
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.html">
+       sarkas.potentials.tests
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/>
+      <label for="toctree-checkbox-23">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.test_coulomb.html">
+         sarkas.potentials.tests.test_coulomb
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.test_egs.html">
+         sarkas.potentials.tests.test_egs
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.test_force_pm.html">
+         sarkas.potentials.tests.test_force_pm
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.test_force_pp.html">
+         sarkas.potentials.tests.test_force_pp
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.test_lennardjones.html">
+         sarkas.potentials.tests.test_lennardjones
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.test_moliere.html">
+         sarkas.potentials.tests.test_moliere
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.test_qsp.html">
+         sarkas.potentials.tests.test_qsp
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.tests.test_yukawa.html">
+         sarkas.potentials.tests.test_yukawa
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.yukawa.html">
+       sarkas.potentials.yukawa
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/>
+      <label for="toctree-checkbox-24">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.yukawa.pretty_print_info.html">
+         sarkas.potentials.yukawa.pretty_print_info
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/potentials_subpckg/sarkas.potentials.yukawa.update_params.html">
+         sarkas.potentials.yukawa.update_params
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/time_evolution_subpckg/sarkas.time_evolution.html">
+     sarkas.time_evolution
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/>
+    <label for="toctree-checkbox-25">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/time_evolution_subpckg/sarkas.time_evolution.integrators.html">
+       sarkas.time_evolution.integrators
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/>
+      <label for="toctree-checkbox-26">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/time_evolution_subpckg/sarkas.time_evolution.integrators.Integrator.html">
+         sarkas.time_evolution.integrators.Integrator
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/time_evolution_subpckg/sarkas.time_evolution.thermostats.html">
+       sarkas.time_evolution.thermostats
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/>
+      <label for="toctree-checkbox-27">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/time_evolution_subpckg/sarkas.time_evolution.thermostats.Thermostat.html">
+         sarkas.time_evolution.thermostats.Thermostat
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.html">
+     sarkas.tools
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" type="checkbox"/>
+    <label for="toctree-checkbox-28">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.html">
+       sarkas.tools.observables
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/>
+      <label for="toctree-checkbox-29">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.arg_update_doc.html">
+         sarkas.tools.observables.arg_update_doc
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.calc_Skw.html">
+         sarkas.tools.observables.calc_Skw
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.calc_diff_flux_acf.html">
+         sarkas.tools.observables.calc_diff_flux_acf
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.calc_moments.html">
+         sarkas.tools.observables.calc_moments
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.calc_nkt.html">
+         sarkas.tools.observables.calc_nkt
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.calc_pressure_tensor.html">
+         sarkas.tools.observables.calc_pressure_tensor
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.calc_vacf.html">
+         sarkas.tools.observables.calc_vacf
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.calc_vkt.html">
+         sarkas.tools.observables.calc_vkt
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.calculate_herm_coeff.html">
+         sarkas.tools.observables.calculate_herm_coeff
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.col_mapper.html">
+         sarkas.tools.observables.col_mapper
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.compute_doc.html">
+         sarkas.tools.observables.compute_doc
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.grad_expansion.html">
+         sarkas.tools.observables.grad_expansion
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.kspace_setup.html">
+         sarkas.tools.observables.kspace_setup
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.load_from_restart.html">
+         sarkas.tools.observables.load_from_restart
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.plot_labels.html">
+         sarkas.tools.observables.plot_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.setup_doc.html">
+         sarkas.tools.observables.setup_doc
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.CurrentCorrelationFunction.html">
+         sarkas.tools.observables.CurrentCorrelationFunction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.DiffusionFlux.html">
+         sarkas.tools.observables.DiffusionFlux
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.DynamicStructureFactor.html">
+         sarkas.tools.observables.DynamicStructureFactor
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.ElectricCurrent.html">
+         sarkas.tools.observables.ElectricCurrent
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.Observable.html">
+         sarkas.tools.observables.Observable
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.PressureTensor.html">
+         sarkas.tools.observables.PressureTensor
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.RadialDistributionFunction.html">
+         sarkas.tools.observables.RadialDistributionFunction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.StaticStructureFactor.html">
+         sarkas.tools.observables.StaticStructureFactor
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.Thermodynamics.html">
+         sarkas.tools.observables.Thermodynamics
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.VelocityAutoCorrelationFunction.html">
+         sarkas.tools.observables.VelocityAutoCorrelationFunction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.observables.VelocityDistribution.html">
+         sarkas.tools.observables.VelocityDistribution
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.transport.html">
+       sarkas.tools.transport
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/>
+      <label for="toctree-checkbox-30">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/tools_subpckg/sarkas.tools.transport.TransportCoefficients.html">
+         sarkas.tools.transport.TransportCoefficients
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.html">
+     sarkas.utilities
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/>
+    <label for="toctree-checkbox-31">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.html">
+       sarkas.utilities.exceptions
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/>
+      <label for="toctree-checkbox-32">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.AlgorithmError.html">
+         sarkas.utilities.exceptions.AlgorithmError
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.AlgorithmWarning.html">
+         sarkas.utilities.exceptions.AlgorithmWarning
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.ParticlesError.html">
+         sarkas.utilities.exceptions.ParticlesError
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.ParticlesWarning.html">
+         sarkas.utilities.exceptions.ParticlesWarning
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.PhysicsWarning.html">
+         sarkas.utilities.exceptions.PhysicsWarning
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.SarkasError.html">
+         sarkas.utilities.exceptions.SarkasError
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.SarkasWarning.html">
+         sarkas.utilities.exceptions.SarkasWarning
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.exceptions.TimerError.html">
+         sarkas.utilities.exceptions.TimerError
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.fdints.html">
+       sarkas.utilities.fdints
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-33" name="toctree-checkbox-33" type="checkbox"/>
+      <label for="toctree-checkbox-33">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.fdints.fd_doc_hparams.html">
+         sarkas.utilities.fdints.fd_doc_hparams
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.fdints.fd_doc_iparams.html">
+         sarkas.utilities.fdints.fd_doc_iparams
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.fdints.fermidirac_integral.html">
+         sarkas.utilities.fdints.fermidirac_integral
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.io.html">
+       sarkas.utilities.io
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-34" name="toctree-checkbox-34" type="checkbox"/>
+      <label for="toctree-checkbox-34">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.io.alpha_to_int.html">
+         sarkas.utilities.io.alpha_to_int
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.io.convert_bytes.html">
+         sarkas.utilities.io.convert_bytes
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.io.num_sort.html">
+         sarkas.utilities.io.num_sort
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.io.InputOutput.html">
+         sarkas.utilities.io.InputOutput
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.maths.html">
+       sarkas.utilities.maths
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-35" name="toctree-checkbox-35" type="checkbox"/>
+      <label for="toctree-checkbox-35">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.maths.betamp.html">
+         sarkas.utilities.maths.betamp
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.maths.correlationfunction.html">
+         sarkas.utilities.maths.correlationfunction
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.maths.force_error_analytic_lcl.html">
+         sarkas.utilities.maths.force_error_analytic_lcl
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.maths.force_error_analytic_pp.html">
+         sarkas.utilities.maths.force_error_analytic_pp
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.maths.force_error_approx_pm.html">
+         sarkas.utilities.maths.force_error_approx_pm
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.maths.force_error_approx_pppm.html">
+         sarkas.utilities.maths.force_error_approx_pppm
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.maths.yukawa_green_function.html">
+         sarkas.utilities.maths.yukawa_green_function
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.tests.html">
+       sarkas.utilities.tests
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-36" name="toctree-checkbox-36" type="checkbox"/>
+      <label for="toctree-checkbox-36">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.tests.test_fdints.html">
+         sarkas.utilities.tests.test_fdints
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.tests.test_maths.html">
+         sarkas.utilities.tests.test_maths
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.timing.html">
+       sarkas.utilities.timing
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" type="checkbox"/>
+      <label for="toctree-checkbox-37">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../api/util_subpckg/sarkas.utilities.timing.SarkasTimer.html">
+         sarkas.utilities.timing.SarkasTimer
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Credits:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../credits/credits.html">
+   Credits
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-38" name="toctree-checkbox-38" type="checkbox"/>
+  <label for="toctree-checkbox-38">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../credits/pub_research.html">
+     Publications
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../credits/team.html">
+     Dev Team
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-<form class="navbar-form navbar-right" action="../../search.html" method="get">
- <div class="form-group">
-  <input type="text" name="q" class="form-control" placeholder="Search" />
- </div>
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
-          
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
         </div>
     </div>
-  </div>
+    <div id="rtd-footer-container"></div>
+</div>
 
-<div class="container">
-  <div class="row">
-    <div class="body col-md-12 content" role="main">
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/murillo-group/sarkas/"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/documentation/Tutorial_NB/Post_Processing_Docs.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
       
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Content
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Thermodynamics">
+   Thermodynamics
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Radial-Distribution-Function">
+   Radial Distribution Function
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Static-Structure-Factor">
+   Static Structure Factor
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Data Analysis</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Content </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Thermodynamics">
+   Thermodynamics
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Radial-Distribution-Function">
+   Radial Distribution Function
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#Static-Structure-Factor">
+   Static Structure Factor
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
   
 <style>
 /* CSS for nbsphinx extension */
@@ -358,11 +1856,12 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -371,10 +1870,14 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
+.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -386,18 +1889,21 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
+.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
+.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Data-Analysis">
-<h1>Data Analysis<a class="headerlink" href="#Data-Analysis" title="Permalink to this headline">¶</a></h1>
+<section id="Data-Analysis">
+<h1>Data Analysis<a class="headerlink" href="#Data-Analysis" title="Permalink to this headline">#</a></h1>
 <p>Once the simulation is complete we enter the <strong>Post Processing</strong> stage where we <em>measure</em> physical quantities and calculate transport coefficients.</p>
 <p>Sarkas was developed to make this process as simple and straightforward as possible.</p>
 <p>The YAML input file can be found at <a class="reference external" href="https://raw.githubusercontent.com/murillo-group/sarkas/master/docs/documentation/Tutorial_NB/input_files/yukawa_mks_p3m.yaml">input_file</a> and this notebook at <a class="reference external" href="https://raw.githubusercontent.com/murillo-group/sarkas/master/docs/documentation/Tutorial_NB/Post_Processing_Docs.ipynb">notebook</a></p>
@@ -406,8 +1912,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Import the usual libraries</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import the usual libraries</span>
 <span class="o">%</span><span class="k">pylab</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">os</span>
@@ -416,12 +1921,9 @@ div.rendered_html tbody tr:hover {
 
 <span class="c1"># Import sarkas</span>
 <span class="kn">from</span> <span class="nn">sarkas.processes</span> <span class="kn">import</span> <span class="n">PostProcess</span>
-<span class="c1"># Create the file path to the YAML input file</span>
-<span class="n">example_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span>
-                                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;sarkas&#39;</span><span class="p">,</span>
-                                              <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;examples&#39;</span><span class="p">,</span><span class="s1">&#39;Yukawa&#39;</span><span class="p">)))</span>
 
-<span class="n">input_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">example_directory</span><span class="p">,</span> <span class="s1">&#39;yukawa_mks_p3m.yaml&#39;</span><span class="p">)</span>
+<span class="c1"># Create the file path to the YAML input file</span>
+<span class="n">input_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;input_files&#39;</span><span class="p">,</span> <span class="s1">&#39;yukawa_mks_p3m.yaml&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -434,73 +1936,160 @@ Using matplotlib backend: Qt5Agg
 Populating the interactive namespace from numpy and matplotlib
 </pre></div></div>
 </div>
-<p>Similar to the <strong>Pre Processing</strong> and <strong>Simulation</strong> stages three lines are enough. The <code class="docutils literal notranslate"><span class="pre">run</span></code> method will calculate everything that was included in the input YAML file. This was shown in the <a class="reference external" href="https://murillo-group.github.io/sarkas/documentation/Quickstart.html">Quickstart notebook</a> where we calculated the Radial Distribution Function. In this notebook we want to calculate the Radial Distribution Function, the Static Structure Function, the Dynamic Structure Function, and the Current
-Correlation Functions. Instead of executing <code class="docutils literal notranslate"><span class="pre">run</span></code> we will show how to compute observables and transport coefficient directly.</p>
-<p>Each observable is identified by a class which is stored as an attribute of the <code class="docutils literal notranslate"><span class="pre">PostProcess</span></code>. The class names are</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">rdf</span></code> = Radial Distribution Function</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ssf</span></code> = Static Structure Function</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dsf</span></code> = Dynamic Structure Function</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ccf</span></code> = Current Correlation Function</p></li>
-</ul>
-<p>In addition, we have the <code class="docutils literal notranslate"><span class="pre">Thermodynamics</span></code> class (name <code class="docutils literal notranslate"><span class="pre">therm</span></code>) which is used to store and calculate all the thermodynamic functions. The energy and temperature are read from the CSV file saved during the simulation stage.</p>
+<p>Similar to the <strong>Pre Processing</strong> and <strong>Simulation</strong> stages three lines are enough. The <code class="docutils literal notranslate"><span class="pre">run</span></code> method will calculate everything that was included in the input YAML file. This was shown in the <a class="reference external" href="https://murillo-group.github.io/sarkas/documentation/Quickstart.html">Quickstart notebook</a> where we calculated the Radial Distribution Function. In this notebook we want to calculate the Radial Distribution Function and the Static Structure Function.</p>
+<p>Each observable is an object and it is stored as an attribute of the PostProcess. The class names are</p>
+<p><code class="docutils literal notranslate"><span class="pre">therm</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.Thermodynamics.html">Thermodynamics</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">rdf</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.RadialDistributionFunction.html">Radial Distribution Function</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">ssf</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.StaticStructureFactor.html">Static Structure Factor</a></p>
 <p>Other class names that we are not calculating here are:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">ec</span></code> = Electric Current</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">vd</span></code> = Velocity Distribution</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">vacf</span></code> = Velocity AutoCorrelation Function</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">diff_flux</span></code> = Flux AutoCorrelation Function ( mixtures only)</p></li>
-</ul>
-<p>See our <a class="reference external" href="https://murillo-group.github.io/sarkas/examples/examples.html">Examples page</a> for more info on how to calculate these.</p>
+<p><code class="docutils literal notranslate"><span class="pre">dsf</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.DynamicStructureFunction.html">Dynamic Structure Function</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">ccf</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.CurrentCorrelationFunction.html">Current Correlation Function</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">ec</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.ElectricCurrent.html">Electric Current</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">vd</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.VelocityDistribution.html">Velocity Distribution</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">vacf</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.VelocityAutoCorrelationFunction.html">Velocity AutoCorrelation Function</a></p>
+<p><code class="docutils literal notranslate"><span class="pre">diff_flux</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.DiffusionFlux.html">Flux AutoCorrelation Function</a> ( mixtures only)</p>
+<p><code class="docutils literal notranslate"><span class="pre">p_tensor</span></code> = <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.PressureTensor.html">Pressure Tensor</a></p>
+<p>You can find more information for each observable on the <a class="reference external" href="../../apit/tools_subpckg/sarkas.tools.observables.html">Observable page</a> and our <a class="reference external" href="../../examples/examples.html">Examples page</a> for more info on how to use them.</p>
+<p>Let’s run the postprocessing</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Let&#39;s initialize the class</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s initialize the class</span>
 <span class="n">postproc</span> <span class="o">=</span> <span class="n">PostProcess</span><span class="p">(</span><span class="n">input_file_name</span><span class="p">)</span>
 <span class="n">postproc</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">read_yaml</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">postproc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 
 
+==================== Radial Distribution Function ====================
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-                                 Postprocessing
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+Data saved in:
+ Simulations/yocp_pppm/PostProcessing/RadialDistributionFunction/Production/RadialDistributionFunction_yocp.h5
+Data accessible at: self.ra_values, self.dataframe
 
-Job ID:  yocp
-Job directory:  Simulations/yocp_pppm
-PostProcessing directory:
- Simulations/yocp_pppm/PostProcessing
-
-Equilibration dumps directory:  Simulations/yocp_pppm/Simulation/Equilibration/dumps
-Production dumps directory:
- Simulations/yocp_pppm/Simulation/Production/dumps
-
-Equilibration Thermodynamics file:
- Simulations/yocp_pppm/Simulation/Equilibration/EquilibrationEnergy_yocp.csv
-Production Thermodynamics file:
- Simulations/yocp_pppm/Simulation/Production/ProductionEnergy_yocp.csv
+No. bins = 500
+dr = 0.0110 a_ws = 1.2540e-13 [m]
+Maximum Distance (i.e. potential.rc)= 5.5100 a_ws = 6.2702e-11 [m]
 </pre></div></div>
 </div>
-<p>The output tells us again where we can find the snapshots of our simulation and where the data computed in the Post Processing stage will be stored i.e. <code class="docutils literal notranslate"><span class="pre">PostProcessing</span> <span class="pre">Directory</span></code>.</p>
-<div class="section" id="Thermodynamics">
-<h2>Thermodynamics<a class="headerlink" href="#Thermodynamics" title="Permalink to this headline">¶</a></h2>
-<p>Let’s first look at the temperature and energy evolution during the equilibration phase. This can be done by running the following cell.</p>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "fcc35be451bf4e8ba852c8c6c0ba3dcd", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Radial Distribution Function Calculation Time: 0 sec 57 msec 85 usec 789 nsec
+
+
+===================== Static Structure Function ======================
+
+k wavevector information saved in:
+ Simulations/yocp_pppm/PostProcessing/k_space_data/k_arrays.npz
+n(k,t) Data saved in:
+ Simulations/yocp_pppm/PostProcessing/k_space_data/nkt.h5
+Data saved in:
+ Simulations/yocp_pppm/PostProcessing/StaticStructureFunction/Production/StaticStructureFunction_yocp.h5
+Data accessible at: self.k_list, self.k_counts, self.ka_values, self.dataframe
+
+Smallest wavevector k_min = 2 pi / L = 3.9 / N^(1/3)
+k_min = 0.1809 / a_ws = 1.5898e+10 [1/m]
+
+Angle averaging choice: custom
+        Maximum angle averaged k harmonics = n_x, n_y, n_z = 13, 13, 13
+        Largest angle averaged k_max = k_min * sqrt( n_x^2 + n_y^2 + n_z^2)
+        AA k_max = 4.0737 / a_ws = 3.5798e+11 [1/m]
+        Maximum k harmonics = n_x, n_y, n_z = 66, 66, 66
+        Largest wavector k_max = k_min * n_x
+        k_max = 11.9406 / a_ws = 1.0493e+12 [1/m]
+
+Total number of k values to calculate = 2902
+No. of unique ka values to calculate = 427
+
+Calculating n(k,t) for slice 1/2.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "ebca2a05c0f74b56942776b179e7154c", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Calculating n(k,t) for slice 2/2.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "2bbe36e74e7640a78d8bc998d3818de7", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+n(k,t) Calculation Time: 0 hrs 29 min 10 sec
+
+Calculating S(k) ...
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "15c3032c90ac4c8da78549486060821f", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Static Structure Function Calculation Time: 0 sec 346 msec 697 usec 472 nsec
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_3_9.png" src="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_3_9.png" />
+</div>
+</div>
+<p>As you can see Sarkas calculated the Radial distribution function, the Static structure function, and produced a plot of the temperature and energy of the production phase.</p>
+<p>On the left most part of the figure above we reproduce some useful info. The main plots show the Temperature (left) and Total Energy (right) as a function of time. The temperature plot shows the thermostating temperature as a red dashed line. In the energy plot, instead, the red dashed line represents the average value. The yellow-orange line shows the moving average.</p>
+<p>The plots above the main plots indicate the percentage deviation from the desired temperature (left) and the percentage deviation of the total energy from its initial value. Also in these plots, the yellow-orange line shows the moving average of the percentage deviation.</p>
+<p>The bar plots to the right of the main plots instead are histograms of the Temperature and Total Energy, respectively.</p>
+<p>Note that the Temperature oscillates around its desired value and has only <span class="math notranslate nohighlight">\(\sim \pm 2\)</span>% deviation from it. Similarly the Total Energy oscillates around its average value and stays within a <span class="math notranslate nohighlight">\(\sim -0.5\)</span> % deviation.</p>
+<p>The bar plots are the next most important thing to notice. We want these to look like Maxwellian distributions. The orange line in the Temperature bar plot is a Maxwellian distribution with a centered at the desired Temperature (dashed red line) with a standard deviation obtained from the actual data. The orange line in the Energy bar plot is again a Maxwellian distribution centered at the dashed red line with a std equal to <span class="math notranslate nohighlight">\(k_BT\)</span>.</p>
+<section id="Thermodynamics">
+<h2>Thermodynamics<a class="headerlink" href="#Thermodynamics" title="Permalink to this headline">#</a></h2>
+<p>We can create a similar plot for the equilibration phase by calling the method <a class="reference external" href="../../api/sarkas.tools.observables.html#sarkas.tools.observables.Thermodynamics.html#sarkas.tools.observables.Thermodynamics.temp_energy_plot">temp_energy_plot</a></p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">therm</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">postproc</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">therm</span><span class="o">.</span><span class="n">temp_energy_plot</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">postproc</span><span class="o">.</span><span class="n">therm</span><span class="o">.</span><span class="n">temp_energy_plot</span><span class="p">(</span>
     <span class="n">postproc</span><span class="p">,</span> <span class="c1"># Pass the Process class with simulation info</span>
     <span class="n">phase</span> <span class="o">=</span> <span class="s1">&#39;equilibration&#39;</span> <span class="c1"># Choose the simulation phase</span>
 <span class="p">)</span>
@@ -514,81 +2103,22 @@ Production Thermodynamics file:
 <img alt="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_5_0.png" src="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_5_0.png" />
 </div>
 </div>
-<p>On the left most part of the figure above we reproduce some useful info. The main plots show the Temperature (left) and Total Energy (right) as a function of time. The temperature plot shows the thermostating temperature as a red dashed line. In the energy plot, instead, the red dashed line represents the average value. The yellow-orange line shows the moving average.</p>
-<p>The plots above the main plots indicate the percentage deviation from the desired temperature (left) and the percentage deviation of the total energy from its initial value. Also in these plots, the yellow-orange line shows the moving average of the percentage deviation.</p>
-<p>The bar plots to the right of the main plots instead are histograms of the Temperature and Total Energy, respectively.</p>
-<p>The most important thing to pay attention to is the temperature plot. We want to see that the Moving Average has approached the desired temperature.</p>
-<p>Let’s now do the same for the production phase.</p>
+<p>We find a figure similar as before. In this case, the most important thing to pay attention to is the temperature plot. We want to see that the Moving Average has approached the desired temperature.</p>
+</section>
+<section id="Radial-Distribution-Function">
+<h2>Radial Distribution Function<a class="headerlink" href="#Radial-Distribution-Function" title="Permalink to this headline">#</a></h2>
+<p>The RDF has been already calculated and the data saved on disk in the directory displayed above.</p>
+<p>As mentioned in the output the data is stored in a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">pandas.DataFrame()</a>. Let’s take a look</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">therm</span><span class="o">.</span><span class="n">temp_energy_plot</span><span class="p">(</span>
-    <span class="n">postproc</span><span class="p">,</span> <span class="c1"># Pass the Process class with simulation info</span>
-    <span class="n">phase</span> <span class="o">=</span> <span class="s1">&#39;production&#39;</span> <span class="c1"># Choose the simulation phase</span>
-<span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">postproc</span><span class="o">.</span><span class="n">rdf</span><span class="o">.</span><span class="n">dataframe</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_7_0.png" src="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_7_0.png" />
-</div>
-</div>
-<p>We find a figure similar as before. In here though we notice that the Temperature oscillates around its desired value and has only <span class="math notranslate nohighlight">\(\sim \pm 2\)</span>% deviation from it. Similarly the Total Energy oscillates around its average value and stays within a <span class="math notranslate nohighlight">\(\sim -0.5\)</span> % deviation.</p>
-<p>The bar plots are the next most important thing to notice. We want these to look like Maxwellian distributions. The orange lines in these plots are exactly this.</p>
-</div>
-<div class="section" id="Radial-Distribution-Function">
-<h2>Radial Distribution Function<a class="headerlink" href="#Radial-Distribution-Function" title="Permalink to this headline">¶</a></h2>
-<p>Let’s calculate the Radial Distribution Function.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Let&#39;s print some info first</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">rdf</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">postproc</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">rdf</span><span class="o">.</span><span class="n">pretty_print</span><span class="p">()</span>
-
-<span class="n">postproc</span><span class="o">.</span><span class="n">rdf</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-
-==================== Radial Distribution Function ====================
-
-Data saved in:
- Simulations/yocp_pppm/PostProcessing/RadialDistributionFunction/Production/RadialDistributionFunction_yocp.csv
-Data accessible at: self.ra_values, self.dataframe
-
-No. bins = 500
-dr = 0.0110 a_ws = 1.2540e-13 [m]
-Maximum Distance (i.e. potential.rc)= 5.5100 a_ws = 6.2702e-11 [m]
-
-Radial Distribution Function Calculation Time: 0 sec 1 msec 412 usec 268 nsec
-</pre></div></div>
-</div>
-<p>As mentioned in the output the data is stored in a <code class="docutils literal notranslate"><span class="pre">`pandas.DataFrame()</span></code> &lt;<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html</a>&gt;`__ and we can access it by</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">rdf</span><span class="o">.</span><span class="n">dataframe</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -602,16 +2132,22 @@ Radial Distribution Function Calculation Time: 0 sec 1 msec 412 usec 268 nsec
         vertical-align: top;
     }
 
-    .dataframe thead th {
-        text-align: right;
+    .dataframe thead tr th {
+        text-align: left;
     }
 </style>
 <table border="1" class="dataframe">
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>Distance</th>
-      <th>H-H RDF</th>
+      <th colspan="2" halign="left">H-H RDF</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>NaN</th>
+      <th>Mean</th>
+      <th>Std</th>
     </tr>
   </thead>
   <tbody>
@@ -619,63 +2155,76 @@ Radial Distribution Function Calculation Time: 0 sec 1 msec 412 usec 268 nsec
       <th>0</th>
       <td>0.000000e+00</td>
       <td>0.000000</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1.881060e-13</td>
       <td>0.000000</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>2</th>
       <td>3.135100e-13</td>
       <td>0.000000</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>3</th>
       <td>4.389140e-13</td>
       <td>0.000000</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>4</th>
       <td>5.643180e-13</td>
       <td>0.000000</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>...</th>
+      <td>...</td>
       <td>...</td>
       <td>...</td>
     </tr>
     <tr>
       <th>495</th>
       <td>6.213768e-11</td>
-      <td>0.962960</td>
+      <td>0.962613</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>496</th>
       <td>6.226309e-11</td>
-      <td>0.963315</td>
+      <td>0.962260</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>497</th>
       <td>6.238849e-11</td>
-      <td>0.962773</td>
+      <td>0.962209</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>498</th>
       <td>6.251389e-11</td>
-      <td>0.962993</td>
+      <td>0.962449</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>499</th>
       <td>6.263930e-11</td>
-      <td>0.962681</td>
+      <td>0.962889</td>
+      <td>NaN</td>
     </tr>
   </tbody>
 </table>
-<p>500 rows × 2 columns</p>
+<p>500 rows × 3 columns</p>
 </div></div>
 </div>
-<p>Let’s plot it!. This can be done by calling the <code class="docutils literal notranslate"><span class="pre">plot()</span></code> (<a class="reference external" href="https://murillo-group.github.io/sarkas/api/sarkas.tools.observables.html#sarkas.tools.observables.Observable.plot:~:text=False.-,plot">docs link</a> ) method of the <code class="docutils literal notranslate"><span class="pre">Observable</span></code> class. We reproduce here the docs for convenience</p>
+<p>This is a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with <code class="docutils literal notranslate"><span class="pre">MultiIndex</span></code>. There are two rows of columns this means that columns of data are called via tuples, <em>e.g.</em> <code class="docutils literal notranslate"><span class="pre">postproc.rdf.dataframe[(&quot;H-H</span> <span class="pre">RDF&quot;,</span> <span class="pre">&quot;Mean&quot;)]</span></code></p>
+<p>As you can see there are three columns. The first is the distance between two particles and it is given in the same units as provided in the YAML. The next two columns are the Mean and Std of the RDF calculated for each slice. The Std column is full of <code class="docutils literal notranslate"><span class="pre">NaN</span></code> because we only had one slice as such no std.</p>
+<p>Let’s plot it!. This can be done by calling the <a class="reference external" href="../../api/tools_subpckg/Observable_mthds/sarkas.tools.observables.Observable.plot.html">plot()</a> method of the <a class="reference external" href="../../api/tools_subpckg/sarkas.tools.observables.Observable.html#sarkas.tools.observables.Observable">Observable</a> class. We reproduce here the docs for convenience</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>def plot(self, scaling=None, acf=False, longitudinal=True, figname=None, show=False, **kwargs):
     &quot;&quot;&quot;
     Plot the observable by calling the pandas.DataFrame.plot() function and save the figure.
@@ -711,11 +2260,10 @@ Radial Distribution Function Calculation Time: 0 sec 1 msec 412 usec 268 nsec
 <p>This method takes the first column of the dataframe as the <span class="math notranslate nohighlight">\(x\)</span> axis and all the other columns as <span class="math notranslate nohighlight">\(y\)</span> axis. As you can see this method is a wrapper for the <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame.plot()</span></code> method, as such you can pass the same parameters. We have added other parameters specific for our plots. In particular the parameter <code class="docutils literal notranslate"><span class="pre">scaling</span></code> is used for rescaling the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> axis.</p>
 <p>In the following we want to plot the RDF as a function of <span class="math notranslate nohighlight">\(r/a_{ws}\)</span> and relabel the x-axis.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Plot</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot</span>
 <span class="n">postproc</span><span class="o">.</span><span class="n">rdf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">scaling</span><span class="o">=</span><span class="n">postproc</span><span class="o">.</span><span class="n">rdf</span><span class="o">.</span><span class="n">a_ws</span><span class="p">,</span>
     <span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$r/a_</span><span class="si">{ws}</span><span class="s1">$&#39;</span><span class="p">)</span>
@@ -723,7 +2271,7 @@ Radial Distribution Function Calculation Time: 0 sec 1 msec 412 usec 268 nsec
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -735,129 +2283,45 @@ Radial Distribution Function Calculation Time: 0 sec 1 msec 412 usec 268 nsec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_13_1.png" src="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_13_1.png" />
+<img alt="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_10_1.png" src="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_10_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Static-Structure-Factor">
-<h2>Static Structure Factor<a class="headerlink" href="#Static-Structure-Factor" title="Permalink to this headline">¶</a></h2>
+<p>Nice!</p>
+</section>
+<section id="Static-Structure-Factor">
+<h2>Static Structure Factor<a class="headerlink" href="#Static-Structure-Factor" title="Permalink to this headline">#</a></h2>
 <p>The next observable we want to measure is the Static Structure Factor. <a class="reference external" href="https://en.wikipedia.org/wiki/Structure_factor">Here</a> you can find a long Wikipedia article about it. In short it is the correlation function of the density fluctuations and Sarkas calculates it by</p>
 <div class="math notranslate nohighlight">
-\[S(\mathbf k) = \langle n(-\mathbf k) n(\mathbf k) \rangle\]</div>
-<p>.</p>
+\[S(\mathbf k) = \langle n(-\mathbf k) n(\mathbf k) \rangle.\]</div>
 <p>For each timestep Sarkas calculates</p>
 <div class="math notranslate nohighlight">
 \[n(\mathbf k, t) = \sum_j^N e^{- i \mathbf k \cdot \mathbf r_i(t)}\]</div>
-<p>then takes the product <span class="math notranslate nohighlight">\(n(-\mathbf k,t) n(\mathbf k,t)\)</span> and averages over the entire simulation time</p>
+<p>then takes the product <span class="math notranslate nohighlight">\(n(-\mathbf k,t) n(\mathbf k,t)\)</span> and averages over the time length of each slice</p>
 <div class="math notranslate nohighlight">
 \[\langle n(-\mathbf k) n(\mathbf k) \rangle  = \frac{1}{M} \sum_{m}^M n(-\mathbf k, m \Delta t) n(\mathbf k, m \Delta t)\]</div>
-<p>where <span class="math notranslate nohighlight">\(M\)</span> is the total number of saved production timesteps and <span class="math notranslate nohighlight">\(\Delta t\)</span> is our snapshot timestep.</p>
+<p>where <span class="math notranslate nohighlight">\(M\)</span> is the total number of saved (slice) timesteps and <span class="math notranslate nohighlight">\(\Delta t\)</span> is our snapshot timestep.</p>
 <p>Notice that <span class="math notranslate nohighlight">\(\mathbf k\)</span> is a vector, as such there are multiple directions we need to consider. The first important thing to understand is that even though we are using periodic boundary conditions to simulate an infinite system, the number of wavelengths that can fit into the simulation box are finite and given by</p>
 <div class="math notranslate nohighlight">
 \[\mathbf k (n_x, n_y , n_z) = 2\pi \left ( \frac{n_x}{L_x} , \frac{n_y}{L_y} ,  \frac{n_z}{L_z} \right ), \quad n_x, n_y, n_z = 0, 1, 2, \dots\]</div>
 <p>where <span class="math notranslate nohighlight">\(n_{x,y,z}\)</span> can take only integer values. This means that the minimum value is</p>
 <div class="math notranslate nohighlight">
 \[k_{\rm min} = \frac{2\pi}{L},\]</div>
-<p>with $ L = L_x = L_y = L_z$. The calculation of <span class="math notranslate nohighlight">\(S(\mathbf k)\)</span> for every combination of the triple <span class="math notranslate nohighlight">\(9n_x, n_y, n_z\)</span> can be very slow. Therefore, it is often the case that researchers calculate only multiple integers of <span class="math notranslate nohighlight">\(k_{\rm min}\)</span> along the three principal axis, that is</p>
+<p>with $ L = L_x = L_y = L_z$. The calculation of <span class="math notranslate nohighlight">\(S(\mathbf k)\)</span> for every combination of the triplet <span class="math notranslate nohighlight">\(n_x, n_y, n_z\)</span> can be very slow. Therefore, it is often the case that researchers calculate only multiple integers of <span class="math notranslate nohighlight">\(k_{\rm min}\)</span> along the three principal axis, that is</p>
 <div class="math notranslate nohighlight">
 \[\mathbf k(n_x,0,0), \quad \mathbf k(0, n_y, 0), \quad \mathbf k (0, 0, n_z).\]</div>
 <p>This is the default way in Sarkas and it corresponds to the choice <code class="docutils literal notranslate"><span class="pre">angle_averaging</span> <span class="pre">=</span> <span class="pre">'principal_axis'</span></code>. If we wanted to calculate every possible combination of the triplet then we would choose <code class="docutils literal notranslate"><span class="pre">angle_averaging</span> <span class="pre">=</span> <span class="pre">'full'</span></code>.</p>
-<p>In the following, we show code for calculating <span class="math notranslate nohighlight">\(S(\mathbf k)\)</span> in a third way, <code class="docutils literal notranslate"><span class="pre">angle_averaging</span> <span class="pre">=</span> <span class="pre">'custom'</span></code>. The code below will calculate <span class="math notranslate nohighlight">\(S(\mathbf k)\)</span> up to <span class="math notranslate nohighlight">\(ka = 12\)</span>, where <span class="math notranslate nohighlight">\(a = a_{\rm ws}\)</span> for brevity. It will calculate every possible combination of the triplet up to <code class="docutils literal notranslate"><span class="pre">max_aa_ka_value</span> <span class="pre">=</span> <span class="pre">4.1</span></code> and then use multiple of the principal axis for the rest.</p>
+<p>In the YAML file we passed the value <code class="docutils literal notranslate"><span class="pre">angle_averaging</span> <span class="pre">=</span> <span class="pre">'custom'</span></code>, in order to show this feature. Sarkas calculated <span class="math notranslate nohighlight">\(S(\mathbf k)\)</span> up to <span class="math notranslate nohighlight">\(ka = 12\)</span>, where <span class="math notranslate nohighlight">\(a = a_{\rm ws}\)</span> for brevity. It calculated every possible combination of the triplet up to <code class="docutils literal notranslate"><span class="pre">max_aa_ka_value</span> <span class="pre">=</span> <span class="pre">4.1</span></code> and then used multiples of the principal axis for the rest.</p>
+<p>Same as before let’s take a look at the data</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">angle_averaging</span> <span class="o">=</span> <span class="s1">&#39;custom&#39;</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">max_ka_value</span> <span class="o">=</span> <span class="mi">12</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">max_aa_ka_value</span> <span class="o">=</span> <span class="mf">4.1</span>
-<span class="c1"># Initialize the class with the new parameters.</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">postproc</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-<span class="c1"># Check</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">pretty_print</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-
-===================== Static Structure Function ======================
-
-k wavevector information saved in:
- Simulations/yocp_pppm/PostProcessing/k_space_data/k_arrays.npz
-n(k,t) Data saved in:
- Simulations/yocp_pppm/PostProcessing/k_space_data/nkt.h5
-Data saved in:
- Simulations/yocp_pppm/PostProcessing/StaticStructureFunction/Production/StaticStructureFunction_yocp.h5
-Data accessible at: self.k_list, self.k_counts, self.ka_values, self.dataframe
-
-Smallest wavevector k_min = 2 pi / L = 3.9 / N^(1/3)
-k_min = 0.1809 / a_ws = 1.5898e+10 [1/m]
-
-Angle averaging choice: custom
-        Maximum angle averaged k harmonics = n_x, n_y, n_z = 13, 13, 13
-        Largest angle averaged k_max = k_min * sqrt( n_x^2 + n_y^2 + n_z^2)
-        AA k_max = 4.0737 / a_ws = 3.5798e+11 [1/m]
-        Maximum k harmonics = n_x, n_y, n_z = 66, 66, 66
-        Largest wavector k_max = k_min * n_x
-        k_max = 11.9406 / a_ws = 1.0493e+12 [1/m]
-
-Total number of k values to calculate = 2902
-No. of unique ka values to calculate = 427
-</pre></div></div>
-</div>
-<p>As you can see Sarkas will calculate 2902 different combinations which correspond to 427 unique values of <span class="math notranslate nohighlight">\(ka\)</span>. This means that our <span class="math notranslate nohighlight">\(S(k)\)</span> will be an array with 427 elements.</p>
-<p>Let’s compute it! Again a progress bar will show up in your notebook, but does not display on the webpage.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Calculating S(k) ...
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "78980a563f5c4178843deee15920c1c1", "version_major": 2, "version_minor": 0}</script></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Static Structure Function Calculation Time: 0 sec 330 msec 188 usec 678 nsec
-</pre></div></div>
-</div>
-<p>As you can see Sarkas calculates <span class="math notranslate nohighlight">\(n(\mathbf k, t)\)</span> first for each slice, only one in this case. This is the slow part of the calculation. Then computes <span class="math notranslate nohighlight">\(S(k)\)</span> by averaging over all the configurations.</p>
-<p>Let’s take a look at the dataframe</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -880,7 +2344,7 @@ Static Structure Function Calculation Time: 0 sec 330 msec 188 usec 678 nsec
     <tr>
       <th></th>
       <th>Inverse Wavelength</th>
-      <th colspan="2" halign="left">H-H</th>
+      <th colspan="2" halign="left">H-H SSF</th>
     </tr>
     <tr>
       <th></th>
@@ -893,32 +2357,32 @@ Static Structure Function Calculation Time: 0 sec 330 msec 188 usec 678 nsec
     <tr>
       <th>0</th>
       <td>1.589833e+10</td>
-      <td>0.031615</td>
-      <td>0.022808</td>
+      <td>0.020323</td>
+      <td>0.010770</td>
     </tr>
     <tr>
       <th>1</th>
       <td>2.248364e+10</td>
-      <td>0.015469</td>
-      <td>0.010955</td>
+      <td>0.009977</td>
+      <td>0.005976</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2.753672e+10</td>
-      <td>0.014363</td>
-      <td>0.010481</td>
+      <td>0.011418</td>
+      <td>0.003642</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3.179666e+10</td>
-      <td>0.003230</td>
-      <td>0.001917</td>
+      <td>0.001656</td>
+      <td>0.001383</td>
     </tr>
     <tr>
       <th>4</th>
       <td>3.554975e+10</td>
-      <td>0.004844</td>
-      <td>0.002577</td>
+      <td>0.003375</td>
+      <td>0.001673</td>
     </tr>
     <tr>
       <th>...</th>
@@ -929,114 +2393,219 @@ Static Structure Function Calculation Time: 0 sec 330 msec 188 usec 678 nsec
     <tr>
       <th>422</th>
       <td>9.856965e+11</td>
-      <td>1.051946</td>
-      <td>0.554365</td>
+      <td>0.999040</td>
+      <td>0.002366</td>
     </tr>
     <tr>
       <th>423</th>
       <td>1.001595e+12</td>
-      <td>1.132036</td>
-      <td>0.644052</td>
+      <td>1.095194</td>
+      <td>0.015077</td>
     </tr>
     <tr>
       <th>424</th>
       <td>1.017493e+12</td>
-      <td>0.961063</td>
-      <td>0.550745</td>
+      <td>0.960260</td>
+      <td>0.018005</td>
     </tr>
     <tr>
       <th>425</th>
       <td>1.033392e+12</td>
-      <td>0.991937</td>
-      <td>0.601141</td>
+      <td>0.966948</td>
+      <td>0.064647</td>
     </tr>
     <tr>
       <th>426</th>
       <td>1.049290e+12</td>
-      <td>1.046963</td>
-      <td>0.555723</td>
+      <td>1.004454</td>
+      <td>0.052012</td>
     </tr>
   </tbody>
 </table>
 <p>427 rows × 3 columns</p>
 </div></div>
 </div>
-<p>In this case we have three columns. As mentioned above <span class="math notranslate nohighlight">\(S(\mathbf k)\)</span> is obtained by averaging over different configuration. The second column is the mean and the third column is the standard deviation.</p>
-<p>This is a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with <code class="docutils literal notranslate"><span class="pre">MultiIndex</span></code>. There are two rows of columns this means that if want to select the second column I need to pass a tuple.</p>
-<p>Let’s print the names of the <code class="docutils literal notranslate"><span class="pre">columns</span></code></p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<p>Note that in this case the Std column is not <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, because we have chosen to divide the simulation into two slices.</p>
+<p>As you can see Sarkas will calculate 2902 different combinations which correspond to 427 unique values of <span class="math notranslate nohighlight">\(ka\)</span>. This means that our <span class="math notranslate nohighlight">\(S(k)\)</span> will be an array with 427 elements.</p>
+<p>Let’s compute it! Again a progress bar will show up in your notebook, but does not display on the webpage.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">columns</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>As you can see Sarkas calculates <span class="math notranslate nohighlight">\(n(\mathbf k, t)\)</span> first for each slice, only one in this case. This is the slow part of the calculation. Then computes <span class="math notranslate nohighlight">\(S(k)\)</span> by averaging over all the configurations.</p>
+<p>Let’s take a look at the dataframe</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-MultiIndex([(&#39;Inverse Wavelength&#39;,    nan),
-            (               &#39;H-H&#39;, &#39;Mean&#39;),
-            (               &#39;H-H&#39;,  &#39;Std&#39;)],
-           )
-</pre></div></div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Inverse Wavelength</th>
+      <th colspan="2" halign="left">H-H SSF</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>NaN</th>
+      <th>Mean</th>
+      <th>Std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.589833e+10</td>
+      <td>0.020323</td>
+      <td>0.010770</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2.248364e+10</td>
+      <td>0.009977</td>
+      <td>0.005976</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2.753672e+10</td>
+      <td>0.011418</td>
+      <td>0.003642</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3.179666e+10</td>
+      <td>0.001656</td>
+      <td>0.001383</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3.554975e+10</td>
+      <td>0.003375</td>
+      <td>0.001673</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>422</th>
+      <td>9.856965e+11</td>
+      <td>0.999040</td>
+      <td>0.002366</td>
+    </tr>
+    <tr>
+      <th>423</th>
+      <td>1.001595e+12</td>
+      <td>1.095194</td>
+      <td>0.015077</td>
+    </tr>
+    <tr>
+      <th>424</th>
+      <td>1.017493e+12</td>
+      <td>0.960260</td>
+      <td>0.018005</td>
+    </tr>
+    <tr>
+      <th>425</th>
+      <td>1.033392e+12</td>
+      <td>0.966948</td>
+      <td>0.064647</td>
+    </tr>
+    <tr>
+      <th>426</th>
+      <td>1.049290e+12</td>
+      <td>1.004454</td>
+      <td>0.052012</td>
+    </tr>
+  </tbody>
+</table>
+<p>427 rows × 3 columns</p>
+</div></div>
 </div>
-<p>Notice that the first line has a tuple with a space as its first element. This needs to be passed.</p>
-<p>Let’s plot it!</p>
+<p>Let’s plot it! This time, though, let’s plot also the std as a shaded area around the mean.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Get the axes handle for the errorbar plot</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the axes handle for the errorbar plot</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">scaling</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">a_ws</span><span class="p">,</span> <span class="c1"># Need to divide because a_ws multiplies k</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;H-H&#39;</span><span class="p">,</span> <span class="s2">&quot;Mean&quot;</span><span class="p">),</span> <span class="c1"># I want only the second column. Otherwise it will plot all the columns</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;H-H SSF&#39;</span><span class="p">,</span> <span class="s2">&quot;Mean&quot;</span><span class="p">),</span> <span class="c1"># I want only the second column. Otherwise it will plot all the columns</span>
     <span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$ka$&#39;</span>
 <span class="p">)</span>
 <span class="c1"># Errorbar plot</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
-    <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s1">&#39;Inverse Wavelength&#39;</span><span class="p">,</span> <span class="n">nan</span><span class="p">)]</span> <span class="o">*</span> <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">a_ws</span><span class="p">,</span>
-    <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s2">&quot;H-H&quot;</span><span class="p">,</span> <span class="s2">&quot;Mean&quot;</span><span class="p">)]</span> <span class="o">-</span> <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s2">&quot;H-H&quot;</span><span class="p">,</span> <span class="s2">&quot;Std&quot;</span><span class="p">)],</span>
-    <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s2">&quot;H-H&quot;</span><span class="p">,</span> <span class="s2">&quot;Mean&quot;</span><span class="p">)]</span> <span class="o">+</span> <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s2">&quot;H-H&quot;</span><span class="p">,</span> <span class="s2">&quot;Std&quot;</span><span class="p">)],</span>
+    <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s1">&#39;Inverse Wavelength&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">a_ws</span><span class="p">,</span>
+    <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s2">&quot;H-H SSF&quot;</span><span class="p">,</span> <span class="s2">&quot;Mean&quot;</span><span class="p">)]</span> <span class="o">+</span> <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s2">&quot;H-H SSF&quot;</span><span class="p">,</span> <span class="s2">&quot;Std&quot;</span><span class="p">)],</span>
+    <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s2">&quot;H-H SSF&quot;</span><span class="p">,</span> <span class="s2">&quot;Mean&quot;</span><span class="p">)]</span> <span class="o">-</span> <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">dataframe</span><span class="p">[(</span><span class="s2">&quot;H-H SSF&quot;</span><span class="p">,</span> <span class="s2">&quot;Std&quot;</span><span class="p">)],</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.2</span>
 <span class="p">)</span>
-
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylim</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;matplotlib.collections.PolyCollection at 0x7f2053931b10&gt;
+[(0.0, 3.0)]
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_23_1.png" src="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_23_1.png" />
+<img alt="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_18_1.png" src="../../_images/documentation_Tutorial_NB_Post_Processing_Docs_18_1.png" />
 </div>
 </div>
-<p>As you can see the errorbars are fairly large for <span class="math notranslate nohighlight">\(ka &gt; 4\)</span>. This is because for each <span class="math notranslate nohighlight">\(k\)</span> value there are only <span class="math notranslate nohighlight">\(3 \times 500\)</span> configuration on which to average. The number <span class="math notranslate nohighlight">\(500\)</span> is the number of snapshots. The number <span class="math notranslate nohighlight">\(3\)</span> comes from the three principal direction of <span class="math notranslate nohighlight">\(k\)</span>. For example <span class="math notranslate nohighlight">\(ka = 6.15\)</span> corresponds to the three directions</p>
+<p>As you can see <span class="math notranslate nohighlight">\(S(\mathbf k)\)</span> is quite noisy for <span class="math notranslate nohighlight">\(ka &gt; 4.0\)</span>. There are two reasons for this.</p>
+<ul class="simple">
+<li><p>Slice averaging</p></li>
+<li><p>Angle averaging</p></li>
+</ul>
+<p>Slice averaging it actually not that significant here and it contributes only to the shaded areas. As a matter of fact notice how smooth is the plot for <span class="math notranslate nohighlight">\(ka &lt; 4.0\)</span>.</p>
+<p>Principal axis averaging is the culprit here. For each <span class="math notranslate nohighlight">\(k\)</span> value there are only <span class="math notranslate nohighlight">\(3 \times 1500\)</span> configuration on which to average, where <span class="math notranslate nohighlight">\(1500\)</span> is the number of snapshots and <span class="math notranslate nohighlight">\(3\)</span> comes from the three principal directions of <span class="math notranslate nohighlight">\(k\)</span>. For example <span class="math notranslate nohighlight">\(ka = 6.15\)</span> corresponds to the three directions</p>
 <div class="math notranslate nohighlight">
 \[ka = \frac{2 \pi}{L} |(34, 0, 0)| = \frac{2 \pi}{L}  |(0,34,0)| = \frac{2 \pi}{L}  |(0, 0, 34)|\]</div>
-<p>To reduce the errorbar we could choose among increasing the number of snapshots, use the <code class="docutils literal notranslate"><span class="pre">angle_averaging</span> <span class="pre">=</span> <span class="pre">'full'</span></code>, or increasing the number of particles. All these options are rather slow. More importantly we don’t know which is the most effective.</p>
-<p>Probably, <code class="docutils literal notranslate"><span class="pre">angle_averaging</span> <span class="pre">=</span> <span class="pre">'full'</span></code> will be more effective for the large <span class="math notranslate nohighlight">\(ka\)</span> value, but it definitely wont’ reduce the errorbars at low <span class="math notranslate nohighlight">\(ka\)</span> values. However, assuming we don’t want to restart the simulation we choose the second option</p>
+<p>To reduce the noise we could choose among: increasing the number of snapshots, use the <code class="docutils literal notranslate"><span class="pre">angle_averaging</span> <span class="pre">=</span> <span class="pre">'full'</span></code>, or increasing the number of particles. All these options are rather slow. More importantly we don’t know which is the most effective.</p>
+<p>Probably, <code class="docutils literal notranslate"><span class="pre">angle_averaging</span> <span class="pre">=</span> <span class="pre">'full'</span></code> will be more effective for the large <span class="math notranslate nohighlight">\(ka\)</span> value, but it definitely won’t reduce any noise at low <span class="math notranslate nohighlight">\(ka\)</span> values. However, assuming we don’t want to restart the simulation (<em>i.e.</em> increase the number of particles) let’s take a look at what it would take to do the full angle averaging.</p>
 <p>The following code computes</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">angle_averaging</span> <span class="o">=</span> <span class="s1">&#39;full&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">angle_averaging</span> <span class="o">=</span> <span class="s1">&#39;full&#39;</span>
 <span class="c1"># Re-Initialize the class with the new parameters.</span>
 <span class="n">postproc</span><span class="o">.</span><span class="n">ssf</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">postproc</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
 <span class="c1"># Check</span>
@@ -1074,201 +2643,65 @@ No. of unique ka values to calculate = 14344
 </pre></div></div>
 </div>
 <p>Notice that we now have 300 762 combinations of <span class="math notranslate nohighlight">\((n_x, n_y, n_z)\)</span> to calculate. This will be rather slow.</p>
-</div>
-<div class="section" id="Dynamic-Structure-Factor">
-<h2>Dynamic Structure Factor<a class="headerlink" href="#Dynamic-Structure-Factor" title="Permalink to this headline">¶</a></h2>
-<p>To be written soon</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">postproc</span><span class="o">.</span><span class="n">dsf</span><span class="o">.</span><span class="n">angle_averaging</span> <span class="o">=</span> <span class="s1">&#39;custom&#39;</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">dsf</span><span class="o">.</span><span class="n">no_slices</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">dsf</span><span class="o">.</span><span class="n">max_ka_value</span> <span class="o">=</span> <span class="mi">12</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">dsf</span><span class="o">.</span><span class="n">max_aa_ka_value</span> <span class="o">=</span> <span class="mf">4.1</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">dsf</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">postproc</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-<span class="n">postproc</span><span class="o">.</span><span class="n">dsf</span><span class="o">.</span><span class="n">pretty_print</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-
-====================== Dynamic Structure Factor ======================
-
-k wavevector information saved in:
- Simulations/yocp_pppm/PostProcessing/k_space_data/k_arrays.npz
-n(k,t) data saved in:
- Simulations/yocp_pppm/PostProcessing/k_space_data/nkt.h5
-Data saved in:
- Simulations/yocp_pppm/PostProcessing/DynamicStructureFactor/Production/DynamicStructureFactor_yocp.h5
-Data accessible at: self.k_list, self.k_counts, self.ka_values, self.frequencies, self.dataframe
-
-Frequency Space Parameters:
-        No. of slices = 2
-        No. dumps per slice = 250
-        Frequency step dw = 2 pi (no_slices * prod_dump_step)/(production_steps * dt)
-        dw = 0.0750 w_p = 1.2566e+15 [Hz]
-        Maximum Frequency w_max = 2 pi /(prod_dump_step * dt)
-        w_max = 9.3751 w_p = 1.5708e+17 [Hz]
-
-
-Wavevector parameters:
-Smallest wavevector k_min = 2 pi / L = 3.9 / N^(1/3)
-k_min = 0.1809 / a_ws = 1.5898e+10 [1/m]
-
-Angle averaging choice: custom
-        Maximum angle averaged k harmonics = n_x, n_y, n_z = 13, 13, 13
-        Largest angle averaged k_max = k_min * sqrt( n_x^2 + n_y^2 + n_z^2)
-        AA k_max = 4.0737 / a_ws = 3.5798e+11 [1/m]
-        Maximum k harmonics = n_x, n_y, n_z = 66, 66, 66
-        Largest wavector k_max = k_min * n_x
-        k_max = 11.9406 / a_ws = 1.0493e+12 [1/m]
-
-Total number of k values to calculate = 2902
-No. of unique ka values to calculate = 427
-</pre></div></div>
-</div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># postproc.dsf.compute()</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># postproc.dsf.plot(</span>
-<span class="c1">#     scaling = postproc.dsf.total_plasma_frequency,</span>
-<span class="c1">#     y = [(&#39;H-H&#39;, &#39;Mean&#39;, &#39;ka = 0.180919&#39;),</span>
-<span class="c1">#          (&#39;H-H&#39;, &#39;Mean&#39;, &#39;ka = 0.313361&#39;),</span>
-<span class="c1">#          (&#39;H-H&#39;, &#39;Mean&#39;, &#39;ka = 0.404547&#39;)],</span>
-<span class="c1">#     logy = True,</span>
-<span class="c1">#     xlim = (-3, 3)</span>
-<span class="c1"># )</span>
-<span class="c1"># postproc.dsf.plot(</span>
-<span class="c1">#     scaling = postproc.dsf.total_plasma_frequency,</span>
-<span class="c1">#     y = [(&#39;He-He&#39;, &#39;Mean&#39;, &#39;ka = 0.180919&#39;),</span>
-<span class="c1">#          (&#39;He-He&#39;, &#39;Mean&#39;, &#39;ka = 0.313361&#39;),</span>
-<span class="c1">#          (&#39;He-He&#39;, &#39;Mean&#39;, &#39;ka = 0.404547&#39;)],</span>
-<span class="c1">#     logy = True,</span>
-<span class="c1">#     xlim = (-3, 3)</span>
-<span class="c1"># )</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="Current-Correlation-Functions">
-<h2>Current Correlation Functions<a class="headerlink" href="#Current-Correlation-Functions" title="Permalink to this headline">¶</a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># postproc.ccf.angle_averaging = &#39;custom&#39;</span>
-<span class="c1"># postproc.ccf.no_slices = 2</span>
-<span class="c1"># postproc.ccf.max_ka_value = 12</span>
-<span class="c1"># postproc.ccf.max_aa_ka_value = 4.1</span>
-<span class="c1"># postproc.ccf.setup(postproc.parameters)</span>
-<span class="c1"># postproc.ccf.pretty_print()</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># postproc.ccf.compute()</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># postproc.ccf.plot(</span>
-<span class="c1">#     scaling = postproc.dsf.total_plasma_frequency,</span>
-<span class="c1">#     y = [(&#39;H-H&#39;, &#39;Mean&#39;, &#39;ka = 0.180919&#39;),</span>
-<span class="c1">#          (&#39;H-H&#39;, &#39;Mean&#39;, &#39;ka = 0.313361&#39;),</span>
-<span class="c1">#          (&#39;H-H&#39;, &#39;Mean&#39;, &#39;ka = 0.404547&#39;)],</span>
-<span class="c1">#     logy = True,</span>
-<span class="c1">#     xlim = (-3, 3)</span>
-<span class="c1"># )</span>
-<span class="c1"># postproc.ccf.plot(</span>
-<span class="c1">#     scaling = postproc.dsf.total_plasma_frequency,</span>
-<span class="c1">#     y = [(&#39;He-He&#39;, &#39;Mean&#39;, &#39;ka = 0.180919&#39;),</span>
-<span class="c1">#          (&#39;He-He&#39;, &#39;Mean&#39;, &#39;ka = 0.313361&#39;),</span>
-<span class="c1">#          (&#39;He-He&#39;, &#39;Mean&#39;, &#39;ka = 0.404547&#39;)],</span>
-<span class="c1">#     logy = True,</span>
-<span class="c1">#     xlim = (-3, 3)</span>
-<span class="c1"># )</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
+</section>
+</section>
 
 
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="Simulation_Docs.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Running a Simulation</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../features.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Available Features</p>
     </div>
-      
-  </div>
-</div> 
-<footer class="footer">
-  <div class="container">
-    <p class="pull-right">
-      <a href="#">Back to top</a>
-      
-    </p>
-    <p>
-        &copy; Copyright 2019-2021, MurilloGroup.<br/>
-      Last updated on Jun 15, 2021.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
-    </p>
-  </div>
-</footer>
-
-  <script type="text/javascript">
-    jQuery(function () {
-        SphinxRtdTheme.Navigation.enable(true);
-      })
-  </script>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
   
-  <style>
-    /* Sidebar header (and topbar for mobile) */
-    /* .wy-side-nav-search,  */
-    .wy-nav-top {
-      background: #18453b;
-    }
-    /* Sidebar */
-    .wy-nav-side {
-      background: #535054;
-    }
-    .wy-menu-vertical p.caption {
-	  color: #fff;
-	}
-	.wy-menu-vertical a {
-	  color: #eee;
-	}
-	.wy-menu-vertical a:hover {
-    background-color: #18453b;
-  }
- /* .wy-nav-content {
-    max-width: 900px !important;
-  } */
-}
-  </style>
+    By MurilloGroup<br/>
+  
+      &copy; Copyright 2019-2022, MurilloGroup.<br/>
+    Last updated on Jul 24, 2024.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
 
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+ 
+    
+  
   </body>
 </html>
